@@ -1,0 +1,39 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production",
+        "build": "vue-cli-service build"
+    },
+    "devDependencies": {
+        "@vue/cli-service": "^5.0.8",
+        "@vue/compiler-sfc": "^3.2.47",
+        "browser-sync": "^2.29.3",
+        "browser-sync-webpack-plugin": "^2.3.0",
+        "laravel-mix": "^6.0.49",
+        "lodash": "^4.17.21",
+        "resolve-url-loader": "^5.0.0",
+        "sass": "^1.58.1",
+        "sass-loader": "13.2.0",
+        "vue": "^3.2.47",
+        "vue-loader": "17.0.1",
+        "vue-recaptcha-v3": "^2.0.1",
+        "vue-router": "^4.1.6",
+        "webpack": "^5.99.7",
+        "webpack-cli": "^4.10.0",
+        "webpack-dev-server": "^4.11.1",
+        "webpack-merge": "^5.8.0",
+        "webpack-notifier": "^1.15.0",
+        "webpackbar": "^5.0.2"
+    },
+    "dependencies": {
+        "axios": "^1.6.8",
+        "echarts": "^5.6.0",
+        "vue-multiselect": "^3.1.0"
+    }
+}

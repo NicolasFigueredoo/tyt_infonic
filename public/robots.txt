@@ -1,0 +1,35 @@
+# Robots.txt para tytsa.com.ar
+# Generado para optimizar SEO
+
+User-agent: *
+
+# Permitir todo el contenido principal
+Allow: /
+Allow: /catalogo
+Allow: /articulo/
+Allow: /quienes_somos
+Allow: /contacto
+
+# Bloquear rutas que no deben indexarse
+Disallow: /admin/
+Disallow: /api/
+Disallow: /storage/
+Disallow: /registro
+Disallow: /login
+Disallow: /password/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /cuenta/
+Disallow: /*.pdf$
+Disallow: /*?*
+Disallow: /search?
+
+# Bloquear URLs de catálogo con parámetros confusos
+# Solo permitir las rutas limpias de categorías
+Disallow: /catalogo/*/*/*/*
+
+# Crawl-delay para no sobrecargar el servidor
+Crawl-delay: 1
+
+# Sitemap principal
+Sitemap: https://tytsa.com.ar/sitemap.xml

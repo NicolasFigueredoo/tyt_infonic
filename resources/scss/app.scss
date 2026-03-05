@@ -1,0 +1,126 @@
+:root {
+    --green: #00A651;
+    --lightgreen: #E6F7F2;
+    --darkgreen: #057c60;
+    --purple: #9F40FD;
+    --lightpurple: #e4cffa;
+    --darkpurple: #6c2c9f;
+    --white: #fff;
+    --lightgray: #F4F4F4;
+    --gray: #D4D4D4;
+    --darkgray: #656565;
+    --black: #131313;
+    --yellow: #FFC107;
+    --lightyellow: #fff3cd;
+    --darkyellow: #c79100;
+    --red: #FF2020;
+    --lightred: #ffebee;
+    --darkred: #c71c1c;
+    --blue: #005ba6;
+}
+
+@import "./base.scss";
+@import "./core.scss";
+@import "./fonts.scss";
+
+.btn-auto {
+    display: inline-block;
+    width: auto;
+}
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #C4C4C4;
+    // border-bottom: none;
+    thead {
+        tr {
+            th {
+                background: #E1E5E9;
+                padding: 10px;
+                text-align: left;
+                font-weight: 500;
+                font-size: 16px;
+                line-height: 19px;
+                color: #656565;
+                padding: 10.5px 20px;
+                border-bottom: 1px solid #C4C4C4;
+                &:first-child {
+                    // padding-left: 0;
+                }
+            }
+        }
+    }
+    tbody {
+        tr {
+            td {
+                background: #FFF;
+                padding: 10.5px 20px;
+                border-bottom: 1px solid #C4C4C4;
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 19px;
+                align-items: center;
+
+                color: #0C0C0C;
+                &:first-child {
+                    // padding-left: 0;
+                }
+                &:last-child {
+                    // border-bottom: none;
+                }
+                &.btns, .btns {
+                    display: flex;
+                    gap: 7.5px;
+                    padding: 5px 20px;
+                    text-align: right;
+                }
+                .btns {
+                    margin: -10.5px -20px;
+                }
+            }
+        }
+        // al ultimo tr le quito el borde inferior
+        tr:last-child {
+            td {
+                border-bottom: none;
+            }
+        }
+    }
+    .btn {
+        font-size: 12px;
+        padding: 7.5px 11px;
+    }
+}
+.table {
+    &__search {
+        td {
+            padding: 0;
+            text-align: center;
+            input {
+                width: 100%;
+                border-radius: 0;
+                outline: none;
+                padding: 10.5px 20px;
+                box-sizing: border-box;
+                border: 1px solid #FFF;
+                &:focus {
+                    border: 1px solid #C4C4C4;
+                }
+            }
+        }
+    }
+    &__icon-search {
+        margin: 3px;
+        font-size: 15px;
+        color: #656565;
+    }
+    &__btns {
+        display: flex;
+    }
+}

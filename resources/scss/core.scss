@@ -1,0 +1,487 @@
+html, body {
+	padding: 0;
+	margin: 0;
+    font-family: var(--roboto);
+}
+
+@mixin min($bp, $max: "null", $device: "screen") {
+    @if $max=="null" {
+        @media only #{$device} and (min-width: #{$bp}) {
+            @content;
+        }
+    }
+
+    @else {
+        @media only #{$device} and (min-width: #{$bp}) and (max-width: #{$max}) {
+            @content;
+        }
+    }
+}
+
+@function bp($bp) {
+    @return map-get($breakpoints, $bp);
+}
+
+$breakpoints: (
+    na: 0px,
+    // For BS grid
+    xs: 320px,
+    // Smartphone
+    sm: 600px,
+    // Tablets
+    md: 900px,
+    // Tablets Landscape and small desktops
+    lg: 1200px,
+    // Desktops
+    xl: 1400px,
+    // Large Desktop
+);
+
+@function container($container-size, $true-val: false) {
+    @return map-get($container-sizes, $container-size);
+}
+// map-get: Es una función que devuelve el valor de una clave de un mapa.
+$container-sizes: (
+    sm: map-get($breakpoints, sm) - 30px,
+    md: map-get($breakpoints, md) - 40px,
+    lg: map-get($breakpoints, lg) - 50px,
+    xl: map-get($breakpoints, xl) - 60px
+);
+.container-half-right {
+    padding-right: 1rem;
+    padding-left: 1rem;
+    overflow: hidden;
+    &:not(.is-fluid) {
+        margin: 0 auto 0 0;
+        @each $bp, $container-size in $container-sizes {
+            @include min(#{bp(#{$bp})}) {
+                width: 100%;
+                max-width: container(#{$bp}) / 2;
+            }
+        }
+    }
+}
+.container-half-left {
+    padding-right: 1rem;
+    padding-left: 1rem;
+    overflow: hidden;
+    &:not(.is-fluid) {
+        margin: 0 0 0 auto;
+        @each $bp, $container-size in $container-sizes {
+            @include min(#{bp(#{$bp})}) {
+                width: 100%;
+                max-width: container(#{$bp}) / 2;
+            }
+        }
+    }
+}
+.container {
+    padding-right: 1rem;
+    padding-left: 1rem;
+    overflow: hidden;
+    &:not(.is-fluid) {
+        margin: 0 auto;
+        @each $bp, $container-size in $container-sizes {
+            @include min(#{bp(#{$bp})}) {
+                width: 100%;
+                max-width: container(#{$bp});
+            }
+        }
+    }
+}
+
+@each $bp, $container-size in $container-sizes {
+    .container-#{$bp} {
+        margin: 0 auto;
+        padding-right: 1rem;
+        padding-left: 1rem;
+        width: 100%;
+
+        $i: index($container-sizes, $bp $container-size);
+
+        @for $j from $i through length($container-sizes) {
+            @include min(#{bp(nth(nth($container-sizes, $j), 1))}) {
+                max-width: container(#{nth(nth($container-sizes, $j), 1)});
+            }
+        }
+    }
+}
+
+
+.align-self-center {
+    align-self: center;
+}
+.btn {
+    // padding: 10.5px 15px;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-family: var(--montserrat);
+    font-weight: 500;
+    border-radius: 0;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: .3s ease;
+    border: none;
+    box-shadow: none;
+    display: inline-block;
+    line-height: 16px;
+    white-space: nowrap;
+    &--rounded {
+        border-radius: 100px
+    }
+    &--circle {
+        border-radius: 100%;
+        padding: 12px;
+    }
+    &--gray {
+        background-color: var(--gray);
+        color: var(--darkgray);
+        &:hover {
+            background-color: var(--darkgray);
+            color: var(--white);
+        }
+    }
+    &--gray-outline {
+        background-color: transparent;
+        color: var(--darkgray);
+        border: 1px solid var(--darkgray);
+        &:hover {
+            background-color: var(--darkgray);
+            color: var(--white);
+        }
+    }
+    &--black-outline {
+        background-color: transparent;
+        color: #000000;
+        border: 1px solid #000000;
+        &:hover {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+    }
+    &--grayred-outline {
+        background-color: transparent;
+        color: #656565;
+        border: 1px solid #656565;
+        &:hover {
+            background-color: rgb(255, 32, 32);
+            border: 1px solid rgb(255, 32, 32);
+            color: #FFFFFF;
+        }
+    }
+    &--lightgray {
+        background-color: var(--lightgray);
+        color: var(--gray);
+        &:hover {
+            background-color: var(--gray);
+            color: var(--white);
+        }
+    }
+    &--lightblue {
+        background-color: #00AEEE;
+        color: #FFFFFF;
+        &:hover {
+            background-color: #0088B8;
+            color: #FFFFFF;
+        }
+    }
+    &--lightgray-outline {
+        background-color: transparent;
+        color: var(--darkgray);
+        border: 1px solid #D4D4D4;
+        &:hover {
+            background-color: var(--lightgray);
+            color: var(--darkgray);
+        }
+    }
+    
+    &--red {
+        background-color: var(--red);
+        color: var(--white);
+        &:hover {
+            background-color: var(--darkred);
+        }
+    }
+    &--yellow {
+        background-color: var(--yellow);
+        color: var(--white);
+        &:hover {
+            background-color: var(--darkyellow);
+        }
+    }
+    &--yellow-outline {
+        background-color: transparent;
+        color: var(--yellow);
+        border: 1px solid var(--yellow);
+        &:hover {
+            background-color: var(--yellow);
+            color: var(--white);
+        }
+    }
+    &--purple {
+        background-color: var(--purple);
+        color: var(--white);
+        &:hover {
+            background-color: var(--darkpurple);
+        }
+    }
+    &--green {
+        background-color: var(--green);
+        color: var(--white);
+        &:hover {
+            background-color: var(--darkgreen);
+        }
+    }
+    &--green-outline {
+        background-color: transparent;
+        color: var(--green);
+        border: 1px solid var(--green);
+        &:hover {
+            background-color: var(--green);
+            color: var(--white);
+        }
+    }
+    &--lightgreen {
+        background-color: var(--lightgreen);
+        color: var(--green);
+        &:hover {
+            background-color: var(--green);
+            color: var(--white);
+        }
+    }
+    &--red {
+        background-color: var(--red);
+        color: var(--white);
+        &:hover {
+            background-color: var(--darkred);
+        }
+    }
+    @media (max-width: 768px) {
+        font-size: 16px;
+    }
+}
+.btn-auto {
+    display: inline-block;
+    width: auto;
+}
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+$grid__cols: 20;
+.flex, .row {
+    display: flex;
+    flex-wrap: wrap;
+}
+.grid {
+    display: grid;
+    // grid 12 columns
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: max-content;
+}
+// primero itero sin breakpoints
+// para que este en el orden correcto
+@for $i from 1 through $grid__cols {
+    .col-#{$i} {
+        grid-column: auto / span #{$i};
+        flex-basis: (100 / ($grid__cols / $i) ) * 1%;
+        box-sizing: border-box;
+        // overflow: hidden;
+    }
+    .grid-#{$i} {
+        display: grid;
+        grid-template-columns: repeat($i, 1fr);
+        grid-template-rows: max-content;
+    }
+}
+// luego itero con breakpoints
+@each $breakpoint, $size in $breakpoints {
+    // y para cada breakpoint, itero con los tamaños
+    // es mejor hacerlo así para que se vea bien
+    // y en el css resultante los agrupo por breakpoint
+    @media screen and (min-width: $size) {
+        @for $i from 1 through $grid__cols {
+            .col-#{$breakpoint}-#{$i} {
+                grid-column: auto / span #{$i};
+                flex-basis: (100 / ($grid__cols / $i) ) * 1%;
+                box-sizing: border-box;
+                // overflow: hidden;
+            }
+            .grid-#{$breakpoint}-#{$i} {
+                display: grid;
+                grid-template-columns: repeat($i, 1fr);
+            }
+        }
+        .btn-#{$breakpoint}-auto{
+            display: inline-block;
+            width: auto;
+        }
+        .btn-#{$breakpoint}-block {
+            display: block;
+            width: 100%;
+        }
+    }
+}
+
+// Aca itero las columnas
+$spacing: 150;
+// Aca itero las columnas
+
+// @for $i from 1 through $spacing {
+//     .w-#{$i} {
+//         width: $i * 1px !important;
+//     }
+//     .m-#{$i} {
+//         margin: $i * 1px !important;
+//     }
+//     .mb-#{$i} {
+//         margin-bottom: $i * 1px !important;
+//     }
+//     .mt-#{$i} {
+//         margin-top: $i * 1px !important;
+//     }
+//     .ml-#{$i}, .ms-#{$i} {
+//         margin-left: $i * 1px !important;
+//     }
+//     .mr-#{$i}, .me-#{$i} {
+//         margin-right: $i * 1px !important;
+//     }
+//     .p-#{$i} {
+//         padding: $i * 1px !important;
+//     }
+//     .pt-#{$i} {
+//         padding-top: $i * 1px !important;
+//     }
+//     .pl-#{$i} {
+//         padding-left: $i * 1px !important;
+//     }
+//     .pr-#{$i} {
+//         padding-right: $i * 1px !important;
+//     }
+//     .pb-#{$i} {
+//         padding-bottom: $i * 1px !important;
+//     }
+//     .py-#{$i} {
+//         padding-top: $i * 1px !important;
+//         padding-bottom: $i * 1px !important;
+//     }
+//     .px-#{$i} {
+//         padding-left: $i * 1px !important;
+//         padding-right: $i * 1px !important;
+//     }
+// }
+
+$display: (
+    flex: flex,
+    block: block,
+    none: none
+);
+@each $key, $value in $display {
+    .d-#{$key} {
+        display: $value !important;
+    }
+}
+$class-promerties: (
+    w: ( width ),
+    m: ( margin ),
+    mt: ( margin-top ),
+    mb: ( margin-bottom ),
+    ml: ( margin-left ),
+    ms: ( margin-left ),
+    mr: ( margin-right ),
+    me: ( margin-right ),
+    my: ( margin-top margin-bottom ),
+    mx: ( margin-left margin-right ),
+    p: ( padding ),
+    pt: ( padding-top ),
+    pl: ( padding-left ),
+    ps: ( padding-left ),
+    pr: ( padding-right ),
+    pe: ( padding-right ),
+    pb: ( padding-bottom ),
+    py: ( padding-top, padding-bottom ),
+    px: ( padding-left, padding-right ),
+    gap: ( gap ),
+);
+@for $i from 0 through $spacing {
+    @each $class, $properties in $class-promerties {
+        .#{$class}-#{$i} {
+            @each $property in $properties {
+                #{$property}: $i * 1px !important;
+            }
+        }
+    }
+}
+@each $breakpoint, $size in $breakpoints {
+    @media screen and (min-width: $size) {
+        @each $class, $properties in $class-promerties {
+            @for $i from 0 through $spacing {
+                .#{$class}-#{$breakpoint}-#{$i} {
+                    @each $property in $properties {
+                        #{$property}: $i * 1px !important;
+                    }
+                }
+            }
+        }
+        @each $key, $value in $display {
+            .d-#{$breakpoint}-#{$key} {
+                display: $value !important;
+            }
+        }
+    }
+}
+.m-auto {
+    margin: auto;
+}
+.text-center {
+    text-align: center;
+}
+.form-control {
+    color: var(--gray);
+    border: 1px solid #ced4da;
+    width: 100%;
+    padding: 7.5px 15px;
+    box-sizing: border-box;
+}
+.form-control:focus {
+    color: var(--gray);
+    background-color: #fff;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+}
+.align-items-end {
+    align-items: flex-end;
+}
+.align-items-start {
+    align-items: flex-start;
+}
+.align-items-center {
+    align-items: center;
+}
+.justify-content-end {
+    justify-content: flex-end;
+}
+.justify-content-between {
+    justify-content: space-between;
+}
+.justify-content-center {
+    justify-content: center;
+}
+.flex-grow-1 {
+    flex-grow: 1;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+.position-relative {
+    position: relative
+}
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+.ms-auto {
+    margin-left: auto;
+}

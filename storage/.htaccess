@@ -1,0 +1,6 @@
+Options -Indexes
+Deny from all
+<FilesMatch '(?i)\.(jpg|jpeg|png|gif|xml|doc|docs|docx|pdf|csv|xlsx|ico|crux|webp|txt|mp4|mp3|3gp|css|js|eps|JPEG|JPG|PNG|GIF|BMP|bmp|webp|WEBP|txt)$'>
+    Order allow,deny
+    Allow from all
+</FilesMatch>
