@@ -623,10 +623,13 @@ class LoginClienteController extends Controller
 
             // Enviar emails
             $email = new ActivarCuenta($user, $camposEmail);
-            Mail::to('info@tytsa.com.ar')->send($email);
-            Mail::to('dcamacho.tytsa@gmail.com')->send($email);
-            Mail::to('lmorales.tytsa@gmail.com')->send($email);
-            Mail::to('ariel@tytsa.com.ar')->send($email);
+            Mail::to('info@tytsa.com.ar')
+                ->bcc([
+                    'dcamacho.tytsa@gmail.com',
+                    'lmorales.tytsa@gmail.com',
+                    'ariel@tytsa.com.ar',
+                ])
+                ->send($email);
 
             $active = "";
             $inicio = Inicio::first();
