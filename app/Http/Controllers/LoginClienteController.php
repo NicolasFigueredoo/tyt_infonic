@@ -497,8 +497,9 @@ class LoginClienteController extends Controller
             ]);
             $recaptchaData = $recaptchaVerifyResponse->json();
             if (!$recaptchaData['success'] || $recaptchaData['score'] < 0.5) {
-                return redirect()->back()->withErrors(['captcha' => 'La validación del captcha falló. Inténtalo nuevamente.']);
-            }
+return redirect()->back()
+    ->withErrors(['captcha' => 'La validación del captcha falló. Inténtalo nuevamente.'])
+    ->withInput();            }
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['captcha' => 'Hubo un error al verificar el reCAPTCHA. Inténtalo más tarde.']);
         }
@@ -636,8 +637,9 @@ class LoginClienteController extends Controller
             return view('page.activarCuenta', compact('active', 'inicio'));
         } catch (\Exception $e) {
             dd($e);
-            return redirect()->back()->withErrors(['error' => 'No se pudo crear el cliente. Intente nuevamente.']);
-        }
+return redirect()->back()
+    ->withErrors(['error' => 'No se pudo crear el cliente. Intente nuevamente.'])
+    ->withInput();        }
     }
 
 
