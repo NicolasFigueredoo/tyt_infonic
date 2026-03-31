@@ -423,7 +423,13 @@ $productos = Articulo::where(function ($query) use ($term) {
         if ($request->filled('slug')) {
             $item->slug = Str::slug($request->slug);
         } else {
-            $item->slug = Str::slug($request->name);
+            $baseSlug = Str::slug($request->name);
+            $slugExists = $this->model::where('slug', $baseSlug)
+                ->where('id', '!=', $item->id ?? 0)
+                ->exists();
+            $item->slug = $slugExists
+                ? $baseSlug . '-' . Str::slug($request->code)
+                : $baseSlug;
         }
         
 

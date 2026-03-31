@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find 'c:/Users/Nicolas Figueredo/Desktop/tyt/resources' -name *rticulo* -o -name *rticle*)"
+    ]
+  }
+}
