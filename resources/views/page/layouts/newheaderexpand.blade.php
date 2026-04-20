@@ -7,19 +7,13 @@
 
     #idioma option {
         color: #000;
-        /* Color del texto de las opciones */
         background-color: #fff;
-        /* Color de fondo de las opciones */
     }
 
     .ui-menu {
-
         z-index: 1500 !important;
         position: relative !important;
     }
-
-
-
 
     .enlace,
     .link,
@@ -121,13 +115,11 @@
 
     .search-container {
         position: relative;
-
     }
 
     .navbar-toggler-icon {
         filter: invert(100%);
     }
-
 
     .navNew {
         display: none
@@ -138,7 +130,6 @@
     }
 
     @media (max-width: 308px) {
-
         .navbar-brand {
             margin-right: 0px !important;
         }
@@ -153,9 +144,7 @@
 
         .navMobile {
             display: flex;
-
         }
-
     }
 
     @media (max-width: 800px) {
@@ -166,15 +155,9 @@
         .pcContant {
             display: none !important;
         }
-
-
     }
 
     @media (max-width: 400px) {
-
-
-
-
         .navbar-brand {
             margin-right: 0px !important;
         }
@@ -204,7 +187,6 @@
         .contMobile {
             margin-top: 10px;
             margin-bottom: 30px;
-
         }
 
         .contMobile div {
@@ -229,7 +211,6 @@
             width: 30px !important
         }
 
-
         .botonesIg {
             margin-top: 50px !important
         }
@@ -238,21 +219,17 @@
             height: auto !important;
         }
 
-
         .navOld {
             display: none !important
         }
 
         .navNew {
             display: flex;
-
         }
 
         .box_container {
             width: 100% !important;
         }
-
-
 
         .inicoSlider {
             height: 640px !important;
@@ -261,8 +238,11 @@
         }
     }
 </style>
+
 <div class="container-fluid d-flex justify-content-center flex-wrap sticky-top p-0 newInicioPage"
     style="z-index: 100; background: linear-gradient(0deg, #161414 1.96%, rgba(22, 20, 20, 0) 95.28%), url({{ asset(Storage::url($empresa->fondoNavbar)) }});background-size:cover">
+
+    {{-- ===================== NAV OLD (desktop grande) ===================== --}}
     <nav class="navbar navbar-expand-lg navbar-light p-0 box_container justify-content-between navOld"
         style="z-index: 2; border-bottom: 1px solid white;">
         <div class="d-flex flex-wrap flex-row justify-content-between align-items-center">
@@ -270,114 +250,88 @@
                 <img src="{{ asset(Storage::url($logosheader->image)) }}" class="img-fluid ">
             </a>
         </div>
+
+        {{-- Desktop links --}}
         <div class="d-flex align-items-center d-none d-lg-flex" style="height:100%">
             <a class="nav-item nav-link mx-1 {{ $active == 'page.inicio' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.inicio') }}">
-                @if (session('locale') === 'es')
-                    Inicio
-                @else
-                    Start
-                @endif
-
+                @if (session('locale') === 'es') Inicio @else Start @endif
             </a>
-            <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }} newnav-link"
-                href="{{ route('page.empresa') }}">
-                @if (session('locale') === 'es')
-                    Quienes somos
-                @else
-                    Who we are
-                @endif
+              <a class="btn py-1 px-4 newnav-link d-none d-lg-flex align-items-center"
+                href="https://www.tytsa.com.ar/registro"
+                style="color:#fff;border-radius:35px;margin-left:10px;font-weight:600;height:auto;">
+                @if (session('locale') === 'es') Convertite en cliente @else Become a client @endif
             </a>
             <a class="nav-item nav-link mx-1 {{ $active == 'page.productos' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.productosCategorias') }}">
-                @if (session('locale') === 'es')
-                    Productos
-                @else
-                    Products
-                @endif
+                @if (session('locale') === 'es') Productos @else Products @endif
             </a>
             <a class="nav-item nav-link mx-1 {{ $active == 'page.contacto' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.contacto') }}">
-                @if (session('locale') === 'es')
-                    Contacto
-                @else
-                    Contact
-                @endif
+                @if (session('locale') === 'es') Contacto @else Contact @endif
             </a>
+            <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }} newnav-link"
+                href="{{ route('page.empresa') }}">
+                @if (session('locale') === 'es') Quienes somos @else Who we are @endif
+            </a>
+          
         </div>
+
+        {{-- Mobile toggle + collapse --}}
         <div class="d-flex align-items-center d-lg-none">
-            <button class="navbar-toggler mb-2 " type="button" data-bs-toggle="collapse"
+            <button class="navbar-toggler mb-2" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse flex-column align-items-center" id="navbarNavAltMarkup">
-                <div class="navbar-nav  d-flex justify-content-between ml-auto mt-3 w-100">
-
+                <div class="navbar-nav d-flex justify-content-between ml-auto mt-3 w-100">
                     <a class="nav-item nav-link mx-1 {{ $active == 'page.inicio' ? 'activeheader' : '' }}"
                         href="{{ route('page.inicio') }}">
-                        @if (session('locale') === 'es')
-                            Inicio
-                        @else
-                            Start
-                        @endif
+                        @if (session('locale') === 'es') Inicio @else Start @endif
                     </a>
-                    <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }}"
-                        href="{{ route('page.empresa') }}">
-                        @if (session('locale') === 'es')
-                            Quienes somos
-                        @else
-                            Who we are
-                        @endif
+                      <a class="btn py-1 px-4 mt-2"
+                        href="https://www.tytsa.com.ar/registro"
+                        style="color:#fff;border-radius:35px;margin-left:10px;font-weight:600;display:inline-block;">
+                        @if (session('locale') === 'es') Convertite en cliente @else Become a client @endif
                     </a>
                     <a class="nav-item nav-link mx-1 {{ $active == 'page.productos' ? 'activeheader' : '' }}"
                         href="{{ route('page.productosCategorias') }}">
-                        @if (session('locale') === 'es')
-                            Productos
-                        @else
-                            Products
-                        @endif
+                        @if (session('locale') === 'es') Productos @else Products @endif
                     </a>
                     <a class="nav-item nav-link mx-1 {{ $active == 'page.contacto' ? 'activeheader' : '' }}"
                         href="{{ route('page.contacto') }}">
-                        @if (session('locale') === 'es')
-                            Contacto
-                        @else
-                            Contact
-                        @endif
+                        @if (session('locale') === 'es') Contacto @else Contact @endif
                     </a>
+                    <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }}"
+                        href="{{ route('page.empresa') }}">
+                        @if (session('locale') === 'es') Quienes somos @else Who we are @endif
+                    </a>
+                  
                     <button class="btn zp_container py-1 px-4" type="button"
-                        style="color:#fff;background:#F15E40;border-radius:35px; margin-left: 10px;">
-                        @if (session('locale') === 'es')
-                            Iniciar sesion
-                        @else
-                            Login
-                        @endif
+                        style="color:#fff;background:#F15E40;border-radius:35px;margin-left:10px;">
+                        @if (session('locale') === 'es') Iniciar sesion @else Login @endif
                     </button>
                 </div>
             </div>
         </div>
+
         <div class="d-flex">
             <form method="POST" action="{{ route('page.productosSearch') }}" id="search-form">
                 @csrf
                 <div class="search-container">
                     <input type="text" id="search-form-desktop" name="search" class="py-1 px-4"
-                        style="width:144px;border-radius:35px; border: solid 2px #fff; background: none; color: #fff;"
-                        @if (session('locale') === 'es') placeholder="Buscar"    
-                @else
-                 placeholder="Search" @endif>
+                        style="width:144px;border-radius:35px;border:solid 2px #fff;background:none;color:#fff;"
+                        @if (session('locale') === 'es') placeholder="Buscar" @else placeholder="Search" @endif>
                     <i class="fa fa-search" aria-hidden="true"></i>
                 </div>
             </form>
             <button class="btn zp_container py-1 px-4 d-none d-lg-block" type="button"
-                style="color:#fff;background:#F15E40;border-radius:35px; margin-left: 10px;">
-                @if (session('locale') === 'es')
-                    Iniciar sesion
-                @else
-                    Login
-                @endif
+                style="color:#fff;background:#F15E40;border-radius:35px;margin-left:10px;">
+                @if (session('locale') === 'es') Iniciar sesion @else Login @endif
             </button>
         </div>
+
         <div>
             <form action="{{ route('changeIdioma') }}" method="POST">
                 @csrf
@@ -386,11 +340,10 @@
                     <option value="en" {{ session('locale') === 'en' ? 'selected' : '' }}>English (EN)</option>
                 </select>
             </form>
-
         </div>
-
     </nav>
 
+    {{-- ===================== NAV NEW (tablet) ===================== --}}
     <nav class="navbar navbar-expand-lg navbar-light p-0 box_container justify-content-around navNew"
         style="z-index: 2; border-bottom: 1px solid white;">
         <div class="d-flex flex-wrap flex-row justify-content-between align-items-center">
@@ -398,40 +351,31 @@
                 <img src="{{ asset(Storage::url($logosheader->image)) }}" class="img-fluid ">
             </a>
         </div>
+
+        {{-- Desktop links --}}
         <div class="d-flex align-items-center d-none d-lg-flex" style="height:100%">
             <a class="nav-item nav-link mx-1 {{ $active == 'page.inicio' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.inicio') }}">
-                @if (session('locale') === 'es')
-                    Inicio
-                @else
-                    Start
-                @endif
-
+                @if (session('locale') === 'es') Inicio @else Start @endif
             </a>
-            <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }} newnav-link"
-                href="{{ route('page.empresa') }}">
-                @if (session('locale') === 'es')
-                    Quienes somos
-                @else
-                    Who we are
-                @endif
+               <a class="btn py-1 px-4 newnav-link d-none d-lg-flex align-items-center"
+                href="https://www.tytsa.com.ar/registro"
+                style="color:#fff;border-radius:35px;margin-left:10px;font-weight:600;height:auto;">
+                @if (session('locale') === 'es') Convertite en cliente @else Become a client @endif
             </a>
             <a class="nav-item nav-link mx-1 {{ $active == 'page.productos' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.productosCategorias') }}">
-                @if (session('locale') === 'es')
-                    Productos
-                @else
-                    Products
-                @endif
+                @if (session('locale') === 'es') Productos @else Products @endif
             </a>
             <a class="nav-item nav-link mx-1 {{ $active == 'page.contacto' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.contacto') }}">
-                @if (session('locale') === 'es')
-                    Contacto
-                @else
-                    Contact
-                @endif
+                @if (session('locale') === 'es') Contacto @else Contact @endif
             </a>
+            <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }} newnav-link"
+                href="{{ route('page.empresa') }}">
+                @if (session('locale') === 'es') Quienes somos @else Who we are @endif
+            </a>
+         
         </div>
 
         <div class="d-flex">
@@ -439,25 +383,19 @@
                 @csrf
                 <div class="search-container">
                     <input type="text" id="search-form-tablet" name="search" class="py-1 px-4"
-                        style="width:144px;border-radius:35px; border: solid 2px #fff; background: none; color: #fff;"
-                        @if (session('locale') === 'es') placeholder="Buscar"    
-                @else
-                 placeholder="Search" @endif>
+                        style="width:144px;border-radius:35px;border:solid 2px #fff;background:none;color:#fff;"
+                        @if (session('locale') === 'es') placeholder="Buscar" @else placeholder="Search" @endif>
                     <i class="fa fa-search" aria-hidden="true"></i>
                 </div>
             </form>
             <button class="btn zp_container py-1 px-4 d-none d-lg-block" type="button"
-                style="color:#fff;background:#F15E40;border-radius:35px; margin-left: 10px;">
-                @if (session('locale') === 'es')
-                    Iniciar sesion
-                @else
-                    Login
-                @endif
+                style="color:#fff;background:#F15E40;border-radius:35px;margin-left:10px;">
+                @if (session('locale') === 'es') Iniciar sesion @else Login @endif
             </button>
         </div>
 
         <div class="d-flex align-items-center d-lg-none">
-            <button class="navbar-toggler mb-2 " type="button" data-bs-toggle="collapse"
+            <button class="navbar-toggler mb-2" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -466,49 +404,35 @@
 
         <div class="collapse navbar-collapse flex-column align-items-center mt-4" id="navbarNavAltMarkup">
             <div class="navbar-nav d-flex justify-content-between">
-
                 <a class="nav-item nav-link mx-1 {{ $active == 'page.inicio' ? 'activeheader' : '' }}"
                     href="{{ route('page.inicio') }}">
-                    @if (session('locale') === 'es')
-                        Inicio
-                    @else
-                        Start
-                    @endif
+                    @if (session('locale') === 'es') Inicio @else Start @endif
                 </a>
-                <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }}"
-                    href="{{ route('page.empresa') }}">
-                    @if (session('locale') === 'es')
-                        Quienes somos
-                    @else
-                        Who we are
-                    @endif
+                   <a class="btn py-1 px-4 mt-2"
+                    href="https://www.tytsa.com.ar/registro"
+                    style="color:#fff;border-radius:35px;margin-left:10px;font-weight:600;display:inline-block;">
+                    @if (session('locale') === 'es') Convertite en cliente @else Become a client @endif
                 </a>
                 <a class="nav-item nav-link mx-1 {{ $active == 'page.productos' ? 'activeheader' : '' }}"
                     href="{{ route('page.productosCategorias') }}">
-                    @if (session('locale') === 'es')
-                        Productos
-                    @else
-                        Products
-                    @endif
+                    @if (session('locale') === 'es') Productos @else Products @endif
                 </a>
                 <a class="nav-item nav-link mx-1 {{ $active == 'page.contacto' ? 'activeheader' : '' }}"
                     href="{{ route('page.contacto') }}">
-                    @if (session('locale') === 'es')
-                        Contacto
-                    @else
-                        Contact
-                    @endif
+                    @if (session('locale') === 'es') Contacto @else Contact @endif
                 </a>
+                <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }}"
+                    href="{{ route('page.empresa') }}">
+                    @if (session('locale') === 'es') Quienes somos @else Who we are @endif
+                </a>
+             
                 <button class="btn zp_container py-1 px-4" type="button"
-                    style="color:#fff;background:#F15E40;border-radius:35px; margin-left: 10px;">
-                    @if (session('locale') === 'es')
-                        Iniciar sesion
-                    @else
-                        Login
-                    @endif
+                    style="color:#fff;background:#F15E40;border-radius:35px;margin-left:10px;">
+                    @if (session('locale') === 'es') Iniciar sesion @else Login @endif
                 </button>
             </div>
         </div>
+
         <div>
             <form action="{{ route('changeIdioma') }}" method="POST">
                 @csrf
@@ -517,10 +441,10 @@
                     <option value="en" {{ session('locale') === 'en' ? 'selected' : '' }}>English (EN)</option>
                 </select>
             </form>
-
         </div>
     </nav>
 
+    {{-- ===================== NAV MOBILE ===================== --}}
     <nav class="navbar navbar-expand-lg navbar-light p-0 box_container justify-content-between navMobile"
         style="z-index: 2; border-bottom: 1px solid white;">
         <div class="d-flex flex-wrap flex-row justify-content-between align-items-center">
@@ -528,44 +452,35 @@
                 <img src="{{ asset(Storage::url($logosheader->image)) }}" class="img-fluid ">
             </a>
         </div>
+
+        {{-- Desktop links --}}
         <div class="d-flex align-items-center d-none d-lg-flex" style="height:100%">
             <a class="nav-item nav-link mx-1 {{ $active == 'page.inicio' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.inicio') }}">
-                @if (session('locale') === 'es')
-                    Inicio
-                @else
-                    Start
-                @endif
-
+                @if (session('locale') === 'es') Inicio @else Start @endif
             </a>
-            <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }} newnav-link"
-                href="{{ route('page.empresa') }}">
-                @if (session('locale') === 'es')
-                    Quienes somos
-                @else
-                    Who we are
-                @endif
+                  <a class="btn py-1 px-4 newnav-link d-none d-lg-flex align-items-center"
+                href="https://www.tytsa.com.ar/registro"
+                style="color:#fff;border-radius:35px;margin-left:10px;font-weight:600;height:auto;">
+                @if (session('locale') === 'es') Convertite en cliente @else Become a client @endif
             </a>
             <a class="nav-item nav-link mx-1 {{ $active == 'page.productos' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.productosCategorias') }}">
-                @if (session('locale') === 'es')
-                    Productos
-                @else
-                    Products
-                @endif
+                @if (session('locale') === 'es') Productos @else Products @endif
             </a>
             <a class="nav-item nav-link mx-1 {{ $active == 'page.contacto' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.contacto') }}">
-                @if (session('locale') === 'es')
-                    Contacto
-                @else
-                    Contact
-                @endif
+                @if (session('locale') === 'es') Contacto @else Contact @endif
             </a>
+            <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }} newnav-link"
+                href="{{ route('page.empresa') }}">
+                @if (session('locale') === 'es') Quienes somos @else Who we are @endif
+            </a>
+      
         </div>
 
         <div class="d-flex align-items-center d-lg-none">
-            <button class="navbar-toggler mb-2 " type="button" data-bs-toggle="collapse"
+            <button class="navbar-toggler mb-2" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -577,136 +492,100 @@
                 @csrf
                 <div class="search-container">
                     <input type="text" id="search-form-mobile" name="search" class="py-1 px-4"
-                        style="width:144px;border-radius:35px; border: solid 2px #fff; background: none; color: #fff;"
-                        @if (session('locale') === 'es') placeholder="Buscar"    
-                @else
-                 placeholder="Search" @endif>
+                        style="width:144px;border-radius:35px;border:solid 2px #fff;background:none;color:#fff;"
+                        @if (session('locale') === 'es') placeholder="Buscar" @else placeholder="Search" @endif>
                     <i class="fa fa-search" aria-hidden="true"></i>
                 </div>
             </form>
             <button class="btn zp_container py-1 px-4 d-none d-lg-block" type="button"
-                style="color:#fff;background:#F15E40;border-radius:35px; margin-left: 10px;">
-                @if (session('locale') === 'es')
-                    Iniciar sesion
-                @else
-                    Login
-                @endif
+                style="color:#fff;background:#F15E40;border-radius:35px;margin-left:10px;">
+                @if (session('locale') === 'es') Iniciar sesion @else Login @endif
             </button>
         </div>
 
-
-
         <div class="collapse navbar-collapse flex-column align-items-center mt-4" id="navbarNavAltMarkup">
             <div class="navbar-nav d-flex justify-content-between">
-
                 <a class="nav-item nav-link mx-1 {{ $active == 'page.inicio' ? 'activeheader' : '' }}"
                     href="{{ route('page.inicio') }}">
-                    @if (session('locale') === 'es')
-                        Inicio
-                    @else
-                        Start
-                    @endif
-                </a>
-                <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }}"
-                    href="{{ route('page.empresa') }}">
-                    @if (session('locale') === 'es')
-                        Quienes somos
-                    @else
-                        Who we are
-                    @endif
+                    @if (session('locale') === 'es') Inicio @else Start @endif
                 </a>
                 <a class="nav-item nav-link mx-1 {{ $active == 'page.productos' ? 'activeheader' : '' }}"
                     href="{{ route('page.productosCategorias') }}">
-                    @if (session('locale') === 'es')
-                        Productos
-                    @else
-                        Products
-                    @endif
+                    @if (session('locale') === 'es') Productos @else Products @endif
                 </a>
                 <a class="nav-item nav-link mx-1 {{ $active == 'page.contacto' ? 'activeheader' : '' }}"
                     href="{{ route('page.contacto') }}">
-                    @if (session('locale') === 'es')
-                        Contacto
-                    @else
-                        Contact
-                    @endif
+                    @if (session('locale') === 'es') Contacto @else Contact @endif
+                </a>
+                <a class="nav-item nav-link mx-1 {{ $active == 'page.empresa' ? 'activeheader' : '' }}"
+                    href="{{ route('page.empresa') }}">
+                    @if (session('locale') === 'es') Quienes somos @else Who we are @endif
                 </a>
                 <div>
                     <form action="{{ route('changeIdioma') }}" method="POST">
                         @csrf
                         <select name="idioma" id="idioma" onchange="this.form.submit()">
-                            <option value="es" {{ session('locale') === 'es' ? 'selected' : '' }}>Español (ES)
-                            </option>
-                            <option value="en" {{ session('locale') === 'en' ? 'selected' : '' }}>English (EN)
-                            </option>
+                            <option value="es" {{ session('locale') === 'es' ? 'selected' : '' }}>Español (ES)</option>
+                            <option value="en" {{ session('locale') === 'en' ? 'selected' : '' }}>English (EN)</option>
                         </select>
                     </form>
-
                 </div>
-
+                <a class="btn py-1 px-4 mt-2"
+                    href="https://www.tytsa.com.ar/registro"
+                    style="color:#fff;background:#F15E40;border-radius:35px;margin-left:10px;font-weight:600;display:inline-block;">
+                    @if (session('locale') === 'es') Convertite en cliente @else Become a client @endif
+                </a>
                 <button class="btn zp_container py-1 px-4" type="button"
-                    style="color:#fff;background:#F15E40;border-radius:35px; margin-left: 10px;">
-                    @if (session('locale') === 'es')
-                        Iniciar sesion
-                    @else
-                        Login
-                    @endif
+                    style="color:#fff;background:#F15E40;border-radius:35px;margin-left:10px;">
+                    @if (session('locale') === 'es') Iniciar sesion @else Login @endif
                 </button>
             </div>
         </div>
     </nav>
+
     <div class="d-flex justify-content-around align-items-center newInicioPageTwo" style="height:174px;">
         <p class="box_container pt-5"
-            style="font-weight:600;font-size:32px;line-height:46.88px;color:#fff;text-align: Center;">
-
-
+            style="font-weight:600;font-size:32px;line-height:46.88px;color:#fff;text-align:Center;">
             {{ $title }}
-
-
         </p>
     </div>
 </div>
+
 <script>
     function searchHandler(formId) {
         $(formId).autocomplete({
             source: function(request, response) {
                 $.ajax({
-                    url: '/buscar-productos', // Ruta para la solicitud AJAX
+                    url: '/buscar-productos',
                     dataType: 'json',
                     data: {
-                        term: request.term // Enviar el término de búsqueda
+                        term: request.term
                     },
                     success: function(data) {
-                        // Procesar los resultados y formatearlos para el autocomplete
                         response($.map(data, function(item) {
                             return {
-                                label: item.name + ' (' + item.code +
-                                ')', // Lo que se muestra en el dropdown
-                                value: item
-                                .name, // Valor seleccionado al hacer clic
+                                label: item.name + ' (' + item.code + ')',
+                                value: item.name,
                                 code: item.code,
-                                codigoAnterior: item
-                                .codigoAnterior, // Código del producto
-                                description: item
-                                    .description // Descripción del producto
+                                codigoAnterior: item.codigoAnterior,
+                                description: item.description
                             };
                         }));
                     }
                 });
             },
-            minLength: 2, // Mínimo de caracteres para iniciar la búsqueda
- select: function(event, ui) {
-    console.log("Enviando al backend:", ui.item);
-    $(this).val(ui.item.code); // o ui.item.value según el caso
-    $(this).closest("form").submit();
-}
+            minLength: 2,
+            select: function(event, ui) {
+                console.log("Enviando al backend:", ui.item);
+                $(this).val(ui.item.code);
+                $(this).closest("form").submit();
+            }
         });
     }
 
     searchHandler('#search-form-desktop');
     searchHandler('#search-form-mobile');
     searchHandler('#search-form-tablet');
-
 
     function toggleDatalist() {
         const input = this.value.toLowerCase();
