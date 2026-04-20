@@ -179612,7 +179612,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
-
 // import './assets/main.scss'
 
 window.public_path = document.head.querySelector('meta[name="public-path"]');
@@ -179629,7 +179628,6 @@ window.httpRequest = function (_ref) {
     errors = _ref.errors;
   if (errors && Object.prototype.toString.call(errors) === '[object Object]') {
     // clear all errors
-
     Object.keys(errors).forEach(function (key) {
       errors[key].splice(0, errors[key].length);
     });
@@ -179646,62 +179644,50 @@ window.httpRequest = function (_ref) {
       if (response.ok) {
         resolve(bodyData);
       }
-
       // Código de estado: 401 Unauthorized
-
       if (response.status == 401) {
         console.log('acceso denegado');
         _router__WEBPACK_IMPORTED_MODULE_2__["default"].push('/adm/login');
         reject(response);
       }
-
       // Código de estado: 405 Method Not Allowed
-
       if (response.status == 405) {
         bodyData.then(function (data) {
-          awesomeModal.error('Error', "\n\n                        <p>Ha ocurrido un error 405: Metodo no permitido.</p>\n\n                        <p>".concat(data.message, "</p>\n\n                    "));
+          awesomeModal.error('Error', "\n                        <p>Ha ocurrido un error 405: Metodo no permitido.</p>\n                        <p>".concat(data.message, "</p>\n                    "));
           reject(data);
         });
       }
-
       // Código de estado: 422 Unprocessable Content
-
       if (response.status == 422) {
         // asignar errores
-
         // se debe resolver la promesa para obtener los datos
-
         bodyData.then(function (data) {
           if (errors && Object.prototype.toString.call(errors) === '[object Object]') {
             Object.assign(errors, data.errors);
           } else {
-            awesomeModal.error('Tiene errores en el formulario', "\n\n                            ".concat(Object.keys(data.errors).map(function (key) {
+            awesomeModal.error('Tiene errores en el formulario', "\n                            ".concat(Object.keys(data.errors).map(function (key) {
               return data.errors[key].map(function (error) {
                 return "<div class=\"mb-2\">".concat(error, "</div>");
               }).join('');
-            }).join(''), "\n\n                        "));
+            }).join(''), "\n                        "));
           }
           reject(data);
         });
       }
-
       // Código de estado: 500 Internal Server Error
-
       if (response.status == 500) {
         bodyData.then(function (data) {
           reject(data);
-          awesomeModal.error('Error', "\n\n                        <p>Ha ocurrido un error inesperado.</p>\n\n                        <p>".concat(data, "</p>\n\n                    "));
+          awesomeModal.error('Error', "\n                        <p>Ha ocurrido un error inesperado.</p>\n                        <p>".concat(data.message || JSON.stringify(data), "</p>\n                    "));
         });
       }
       reject(response);
-
       // throw new Error(response);
     });
   });
 };
 
 // public asset or public path or path asset
-
 window.pathAsset = function (path) {
   return "".concat(window.public_path, "/").concat(path);
 };
@@ -179720,9 +179706,7 @@ window.$globalState = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({
 });
 $globalState.sidebar = {
   // side-bar__wrapper--relative
-
   // side-bar__wrapper--absolute
-
   position: {
     value: 'side-bar__wrapper--absolute',
     toggle: function (_toggle) {
@@ -179739,9 +179723,7 @@ $globalState.sidebar = {
     })
   },
   // side-bar__wrapper--left
-
   // side-bar__wrapper--right
-
   place: {
     value: 'side-bar__wrapper--left',
     toggle: function (_toggle2) {
@@ -179758,9 +179740,7 @@ $globalState.sidebar = {
     })
   },
   // side-bar__wrapper--show
-
   // side-bar__wrapper--hide
-
   show: {
     value: 'side-bar__wrapper--hide',
     toggle: function (_toggle3) {
@@ -179797,7 +179777,6 @@ var logout = function logout() {
 };
 window.logout = logout;
 app.provide('$globalState', window.$globalState);
-
 //app.config.globalProperties.$globalState = window.$globalState
 
 window.verifyAuth = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
@@ -179834,7 +179813,6 @@ app.mixin({
   methods: {
     pathAsset: function pathAsset(path) {
       // remove first slash
-
       path = path.replace(/^\//, '');
       return "".concat(window.public_path, "/").concat(path);
     },
@@ -179844,16 +179822,15 @@ app.mixin({
   }
 });
 
-/*
-en vue 3 no se puede usar el filters globalProperties
-en si lugar se recomienda usar computed
-app.config.globalProperties.$filters = {
-    pathAsset(path) {
-        return window.pathAsset(path)
-    }
-}
+/*
+en vue 3 no se puede usar el filters globalProperties
+en si lugar se recomienda usar computed
+app.config.globalProperties.$filters = {
+    pathAsset(path) {
+        return window.pathAsset(path)
+    }
+}
 */
-
 window.toCurrency = function (numero) {
   var decimales = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
   var separadorDecimal = document.head.querySelector('meta[name="decimal-separator"]');
@@ -179874,7 +179851,6 @@ window.toCurrency = function (numero) {
   }
 
   // Redondeamos
-
   if (!isNaN(parseInt(decimales))) {
     if (decimales >= 0) {
       numero = numero.toFixed(decimales);
@@ -179886,7 +179862,6 @@ window.toCurrency = function (numero) {
   }
 
   // Damos formato
-
   partes = numero.split(".", 2);
   array = partes[0].split("");
   for (var i = array.length - 3; i > 0 && array[i - 1] !== "-"; i -= 3) {
@@ -179915,50 +179890,39 @@ window.dataPaginator = function (_ref3) {
   var urlBase = _ref3.urlBase,
     filtersKeys = _ref3.filtersKeys;
   var trash = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
-
   // defino la variable paginator, que se usará para almacenar los datos de la paginación
-
   var paginator = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({});
 
   // defino la variable endpoint, que se usará para almacenar la url de la api
-
   var endpoint = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({
     dataUrl: urlBase,
     lastUrl: null
   });
 
   // defino la variable filters, que se usará para almacenar los filtros de búsqueda
-
   var filters = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({});
 
   // defino la variable appliedFilters, que se usará para almacenar los filtros de búsqueda aplicados
-
   var appliedFilters = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({});
 
   // se inicializan los filtros
-
   filtersKeys.forEach(function (key) {
     filters[key] = '';
     appliedFilters[key] = '';
   });
 
   // se define la función applyFilters, que se ejecutará al hacer click en el botón de buscar
-
   var applyFilters = function applyFilters() {
     // se asignan los valores de los filtros a la variable appliedFilters
-
     appliedFilters.code = filters.code;
     appliedFilters.name = filters.name;
     appliedFilters.description = filters.description;
     appliedFilters.oculto = filters.oculto;
-
     // se ejecuta la función syncData, que se encarga de sincronizar los datos con la api
-
     syncData(endpoint.dataUrl);
   };
 
   // se define la función clearFilters, que se ejecutará al hacer click en el botón de limpiar filtros
-
   var clearFilters = function clearFilters() {
     for (var key in filters) {
       filters[key] = '';
@@ -179973,20 +179937,15 @@ window.dataPaginator = function (_ref3) {
   };
 
   // se define la función syncData, que se encarga de sincronizar los datos con la api
-
   var syncData = function syncData(url) {
     // se muestra el modal de carga
-
     var modal = awesomeModal.loading();
-
     // se verifica si el endpoint tiene la propiedad lastUrl, si no la tiene, se le asigna el valor de dataUrl
-
     if (!endpoint.lastUrl) {
       endpoint.lastUrl = endpoint.dataUrl;
     }
 
     // se verifica si se ha pasado una url como parámetro, si no se ha pasado, se le asigna el valor de lastUrl
-
     if (!url) {
       url = endpoint.lastUrl;
     } else {
@@ -179994,7 +179953,6 @@ window.dataPaginator = function (_ref3) {
     }
 
     // se crea un objeto FormData, que se usará para adjuntar los filtros de búsqueda
-
     var form_data = new FormData();
     for (var _i = 0, _Object$entries = Object.entries(appliedFilters); _i < _Object$entries.length; _i++) {
       var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
@@ -180004,15 +179962,12 @@ window.dataPaginator = function (_ref3) {
         form_data.append('filters[' + key + ']', value);
       }
     }
-
     // si la variable trash es true
-
     if (trash.value) {
       form_data.append('trash', 1);
     }
 
     // se realiza la petición a la api
-
     httpRequest({
       url: url,
       method: 'POST',
@@ -180026,7 +179981,6 @@ window.dataPaginator = function (_ref3) {
   };
 
   // watch para el cambio de la variable trash
-
   (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(trash, function () {
     syncData(endpoint.dataUrl);
   });
