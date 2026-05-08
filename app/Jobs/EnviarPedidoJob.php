@@ -61,7 +61,6 @@ class EnviarPedidoJob implements ShouldQueue
             'dcamacho.tytsa@gmail.com',
             'lmorales.tytsa@gmail.com',
             'ariel@tytsa.com.ar',
-            'nicolasfigueredo_02@hotmail.com',
         ]);
 
         foreach ($destinatarios as $destinatario) {
