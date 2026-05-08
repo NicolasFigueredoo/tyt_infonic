@@ -198,22 +198,98 @@ class ZonaPrivadaController extends Controller
 
     public function enviarMails(Request $request)
     {
+        Log::info('=== enviarMails INICIO ===', [
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'has_response' => $request->has('response'),
+            'response_type' => gettype($request->response),
+            'response_length' => is_string($request->response) ? strlen($request->response) : null,
+        ]);
+
         $raw = $request->response;
+
+        if (!$raw) {
+            Log::error('enviarMails: no llegó response en el request', [
+                'all_keys' => array_keys($request->all()),
+            ]);
+
+            return response()->json([
+                'error' => 'No llegó response en el request'
+            ], 422);
+        }
+
         if (!mb_check_encoding($raw, 'UTF-8')) {
+            Log::warning('enviarMails: raw no venía en UTF-8, convirtiendo...');
             $raw = mb_convert_encoding($raw, 'UTF-8', 'ISO-8859-1');
         }
 
         $data = json_decode($raw, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            Log::error('enviarMails json_decode error: ' . json_last_error_msg(), ['raw' => substr($raw, 0, 500)]);
-            return response()->json(['error' => 'Error de encoding en los datos del pedido'], 422);
+            Log::error('enviarMails json_decode error: ' . json_last_error_msg(), [
+                'raw_preview' => substr($raw, 0, 1000),
+            ]);
+
+            return response()->json([
+                'error' => 'Error de encoding en los datos del pedido',
+                'json_error' => json_last_error_msg(),
+            ], 422);
         }
 
-        // Despachar al job en background — no bloquea el request
-EnviarPedidoJob::dispatch($data['pedido'], $data['archivo'], (object) $data['usuario']);
+        Log::info('enviarMails: JSON decodificado correctamente', [
+            'keys' => array_keys($data),
+            'pedido_id' => $data['pedido']['id'] ?? null,
+            'numeroPedido' => $data['pedido']['numeroPedido'] ?? null,
+            'usuario_email' => $data['usuario']['email'] ?? null,
+            'archivo_type' => isset($data['archivo']) ? gettype($data['archivo']) : null,
+            'archivo_value' => $data['archivo'] ?? null,
+        ]);
 
-        return response()->json(['message' => 'Correos enviados con éxito']);
+        if (empty($data['pedido'])) {
+            Log::error('enviarMails: falta data[pedido]', ['data' => $data]);
+
+            return response()->json([
+                'error' => 'Faltan datos del pedido'
+            ], 422);
+        }
+
+        if (empty($data['usuario'])) {
+            Log::error('enviarMails: falta data[usuario]', ['data' => $data]);
+
+            return response()->json([
+                'error' => 'Faltan datos del usuario'
+            ], 422);
+        }
+
+        try {
+            EnviarPedidoJob::dispatch(
+                $data['pedido'],
+                $data['archivo'] ?? null,
+                (object) $data['usuario']
+            );
+
+            Log::info('enviarMails: Job despachado correctamente', [
+                'pedido_id' => $data['pedido']['id'] ?? null,
+                'numeroPedido' => $data['pedido']['numeroPedido'] ?? null,
+                'usuario_email' => $data['usuario']['email'] ?? null,
+                'queue_connection' => config('queue.default'),
+            ]);
+
+            return response()->json([
+                'message' => 'Job de correos despachado correctamente'
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('enviarMails: error al despachar job', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'error' => 'No se pudo despachar el job de correos'
+            ], 500);
+        }
     }
 
     public function carritoPasoDosPost(Request $request)

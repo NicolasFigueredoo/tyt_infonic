@@ -2,96 +2,105 @@
 
 namespace App\Jobs;
 
-
-
-use Illuminate\Bus\Queueable;
-
-use Illuminate\Contracts\Queue\ShouldQueue;
-
-use Illuminate\Foundation\Bus\Dispatchable;
-
-use Illuminate\Queue\InteractsWithQueue;
-
-use Illuminate\Queue\SerializesModels;
-
-use Mail;
-
 use App\Mail\Carrito;
-
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-
-
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class EnviarPedidoJob implements ShouldQueue
-
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    protected $pedido_carrito;
+    protected $file;
+    protected $usuario;
 
+    public $tries = 3;
+    public $timeout = 120;
 
+    public function __construct($pedido_carrito, $file, $usuario)
+    {
+        $this->pedido_carrito = $pedido_carrito;
+        $this->file = $file;
+        $this->usuario = $usuario;
+    }
 
-protected $pedido_carrito;
+    public function handle()
+    {
+        Log::info('=== EnviarPedidoJob INICIO ===', [
+            'pedido_id' => is_array($this->pedido_carrito)
+                ? ($this->pedido_carrito['id'] ?? null)
+                : ($this->pedido_carrito->id ?? null),
 
-protected $file;
+            'numeroPedido' => is_array($this->pedido_carrito)
+                ? ($this->pedido_carrito['numeroPedido'] ?? null)
+                : ($this->pedido_carrito->numeroPedido ?? null),
 
-protected $usuario;
+            'usuario_email' => is_array($this->usuario)
+                ? ($this->usuario['email'] ?? null)
+                : ($this->usuario->email ?? null),
 
-public $tries = 3;
-public $timeout = 120;
+            'file_type' => gettype($this->file),
+            'queue_connection' => config('queue.default'),
+            'mailer' => config('mail.default'),
+            'mail_from' => config('mail.from.address'),
+        ]);
 
-public function failed(\Exception $exception)
-{
-Log::error('EnviarPedidoJob agotó los reintentos: ' . $exception->getMessage(), [
-'usuario' => $this->usuario->email ?? null,
-]);
-}
+        $usuarioEmail = is_array($this->usuario)
+            ? ($this->usuario['email'] ?? null)
+            : ($this->usuario->email ?? null);
 
-public function __construct($pedido_carrito, $file, $usuario)
+        $destinatarios = array_filter([
+            $usuarioEmail,
+            'info@tytsa.com.ar',
+            'dcamacho.tytsa@gmail.com',
+            'lmorales.tytsa@gmail.com',
+            'ariel@tytsa.com.ar',
+            'nicolasfigueredo_02@hotmail.com',
+        ]);
 
-{
+        foreach ($destinatarios as $destinatario) {
+            Log::info('EnviarPedidoJob: enviando mail', [
+                'destinatario' => $destinatario,
+            ]);
 
-$this->pedido_carrito = $pedido_carrito;
+            Mail::to($destinatario)->send(
+                new Carrito($this->pedido_carrito, $this->file, $this->usuario)
+            );
 
-$this->file = $file;
+            Log::info('EnviarPedidoJob: mail enviado OK', [
+                'destinatario' => $destinatario,
+            ]);
+        }
 
-$this->usuario = $usuario;
+        Log::info('=== EnviarPedidoJob FIN OK ===', [
+            'destinatarios' => $destinatarios,
+        ]);
+    }
 
-}
+    public function failed(Throwable $exception)
+    {
+        Log::error('=== EnviarPedidoJob FALLÓ DEFINITIVAMENTE ===', [
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
 
+            'pedido_id' => is_array($this->pedido_carrito)
+                ? ($this->pedido_carrito['id'] ?? null)
+                : ($this->pedido_carrito->id ?? null),
 
+            'numeroPedido' => is_array($this->pedido_carrito)
+                ? ($this->pedido_carrito['numeroPedido'] ?? null)
+                : ($this->pedido_carrito->numeroPedido ?? null),
 
-public function handle()
-
-{
-
-try {
-
-$email = new Carrito($this->pedido_carrito, $this->file, $this->usuario);
-
-
-
-Mail::to($this->usuario->email)->send($email);
-
-Mail::to('info@tytsa.com.ar')->send($email);
-
-Mail::to('dcamacho.tytsa@gmail.com')->send($email);
-
-Mail::to('lmorales.tytsa@gmail.com')->send($email);
-
-Mail::to('ariel@tytsa.com.ar')->send($email);
-
-Mail::to('nicolasfigueredo_02@hotmail.com')->send($email);
-
-
-
-Log::info('Pedido enviado correctamente al correo.');
-
-} catch (\Exception $e) {
-
-Log::error('Error al enviar correo en el job EnviarPedidoJob: ' . $e->getMessage());
-
-}
-
-}
-
+            'usuario_email' => is_array($this->usuario)
+                ? ($this->usuario['email'] ?? null)
+                : ($this->usuario->email ?? null),
+        ]);
+    }
 }
