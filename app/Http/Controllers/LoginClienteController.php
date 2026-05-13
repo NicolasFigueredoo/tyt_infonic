@@ -629,7 +629,6 @@ return redirect()->back()
                     'dcamacho.tytsa@gmail.com',
                     'lmorales.tytsa@gmail.com',
                     'ariel@tytsa.com.ar',
-                    'nicolasfigueredo_02@hotmail.com'
                 ])
                 ->send($email);
 
