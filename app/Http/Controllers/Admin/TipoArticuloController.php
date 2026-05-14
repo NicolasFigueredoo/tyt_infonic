@@ -11,7 +11,8 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
-class TipoArticuloController extends Controller {
+class TipoArticuloController extends Controller
+{
     private $model = TipoArticulo::class;
     private $name = 'Tipo Articulo';
     private $prefixPermission = 'tipo_articulo';
@@ -37,6 +38,9 @@ class TipoArticuloController extends Controller {
     // Llamar manualmente desde el admin cuando se necesite actualizar, NO automáticamente.
     public function sincronizarCategorias()
     {
+        set_time_limit(300);
+        ini_set('max_execution_time', 300);
+
         $client = new Client();
         $apiUrlBase = 'https://tytsaapi.ddns.net:8443/productos?maxCount=100&page=';
         $totalPages = 8;
@@ -58,7 +62,6 @@ class TipoArticuloController extends Controller {
                     $articulo = Articulo::where('code', $value['codigoProducto'])->first();
 
                     if ($articulo) {
-                        // Normalizar y actualizar categoría principal
                         if ($value['unidadNegocio']) {
                             $unidadNegocio = mb_strtolower($value['unidadNegocio'], 'UTF-8');
                             $unidadNegocio = str_replace(
@@ -76,7 +79,6 @@ class TipoArticuloController extends Controller {
                             $categoria->save();
                         }
 
-                        // Normalizar y actualizar subcategoría
                         if ($value['familiaWeb']) {
                             $familiaWeb = mb_strtolower($value['familiaWeb'], 'UTF-8');
                             $familiaWeb = str_replace(
@@ -103,34 +105,35 @@ class TipoArticuloController extends Controller {
         }
     }
 
-    public function find($id) { 
+    public function find($id)
+    {
 
         $categorias = $this->model::all();
         $articulos = Articulo::where('oculto', '=', 'false')->get();
 
 
-        if($id == 0){
+        if ($id == 0) {
             return response()->json([
                 'categorias' => $categorias,
                 'productos' => $articulos
 
 
-            ]);  
+            ]);
         }
         $item = $this->model::find($id);
-        
-        
+
+
         $articulosVinculados = $item->productos;
 
-    
-    
-    
-    
-    
-    
-    
 
-        if($item->id == 36 || $item->id == 37 || $item->id == 38){
+
+
+
+
+
+
+
+        if ($item->id == 36 || $item->id == 37 || $item->id == 38) {
 
             if ($item) {
                 return response()->json([
@@ -138,11 +141,9 @@ class TipoArticuloController extends Controller {
                     'productos' => $articulos,
                     'articulosVinculados' => $articulosVinculados
 
-                ]);        }
-
-
-
-        }else{
+                ]);
+            }
+        } else {
 
             if ($item) {
                 return response()->json([
@@ -152,22 +153,24 @@ class TipoArticuloController extends Controller {
                     'articulosVinculados' => $articulosVinculados
 
 
-                ]);  
-        }}
+                ]);
+            }
+        }
 
         return response()->json(['message' => $this->name . ' not found'], 404);
     }
 
-    public function store(Request $request, $id = null) {
+    public function store(Request $request, $id = null)
+    {
         // validate the request
-        
+
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
 
         // store a new item
-        if ($id && ! $request->has('__form-input-copy') ) {
+        if ($id && ! $request->has('__form-input-copy')) {
             $item = $this->model::find($id);
         } else {
             $item = new $this->model;
@@ -185,28 +188,26 @@ class TipoArticuloController extends Controller {
 
 
 
-        
-        if ($request->hasFile('imagenSrc')){
-            File::delete(public_path('inicio/'.$item->imagen));
+
+        if ($request->hasFile('imagenSrc')) {
+            File::delete(public_path('inicio/' . $item->imagen));
 
             $file = $request->file('imagenSrc');
             $nombreImagen = 'media_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move('storage/inicio/', $nombreImagen);
             $item->imagen  = 'inicio/' . $nombreImagen;
-
         }
 
-        if ($request->hasFile('imagenMarca')){
-            File::delete(public_path('inicio/'.$item->imagenMarca));
+        if ($request->hasFile('imagenMarca')) {
+            File::delete(public_path('inicio/' . $item->imagenMarca));
 
             $file = $request->file('imagenMarca');
             $nombreImagen = 'media_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move('storage/inicio/', $nombreImagen);
             $item->imagenMarca  = 'inicio/' . $nombreImagen;
-
         }
-            
-        
+
+
         $item->save();
 
 
@@ -217,30 +218,31 @@ class TipoArticuloController extends Controller {
         if (json_last_error() !== JSON_ERROR_NONE) {
             return response()->json(['error' => 'Error al decodificar los productos'], 400);
         }
-        
 
 
-      if(count($productos) > 0){
-        $item->productos()->detach();
+
+        if (count($productos) > 0) {
+            $item->productos()->detach();
 
 
-          foreach ($productos as $producto) {
-              $existingProducto = Articulo::find($producto['id']);
-              if ($existingProducto) {
-                  $existingProducto->categorias()->syncWithoutDetaching($item->id);
-              }
-          }
-      }
+            foreach ($productos as $producto) {
+                $existingProducto = Articulo::find($producto['id']);
+                if ($existingProducto) {
+                    $existingProducto->categorias()->syncWithoutDetaching($item->id);
+                }
+            }
+        }
 
 
         return $item;
     }
-    public function ocultar($id) {
+    public function ocultar($id)
+    {
         $item = $this->model::find($id);
         if ($item) {
-            if($item->oculto == 'true'){
+            if ($item->oculto == 'true') {
                 $item->oculto = 'false';
-            }else{
+            } else {
                 $item->oculto = 'true';
             }
             $item->save();
@@ -248,47 +250,50 @@ class TipoArticuloController extends Controller {
         }
         //abort(500, 'El registro que intenta eliminar no existe');
     }
-    public function delete($id) {
-        
+    public function delete($id)
+    {
+
         $item = $this->model::find($id);
         $articulosVinculados = Articulo::where('sub_categoria', $item->id)->where('oculto', '=', 'false')->get();
 
         foreach ($articulosVinculados as $producto) {
-     
-                $producto->sub_categoria = null;
-                $producto->save();
-            
+
+            $producto->sub_categoria = null;
+            $producto->save();
         }
-        
+
         $item->delete();
 
-        
+
         return $item;
     }
 
-    public function restore($id) {
+    public function restore($id)
+    {
         $item = $this->model::withTrashed()->find($id);
         $item->restore();
         return $item;
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
         $item = $this->model::withTrashed()->find($id);
         $item->forceDelete();
         return $item;
     }
 
-    public function listSelect(Request $request) {
+    public function listSelect(Request $request)
+    {
         $data = $this->model::orderBy('id', 'asc');
-        if ( request()->has('search') && strlen(request()->search) ) {
-            $data->where(function($query) {
+        if (request()->has('search') && strlen(request()->search)) {
+            $data->where(function ($query) {
                 $keys = ['name'];
                 foreach ($keys as $key => $colName) {
-                    $query->orWhere($colName, 'like', '%'.request()->search.'%');
+                    $query->orWhere($colName, 'like', '%' . request()->search . '%');
                 }
             });
         }
-        if ( request()->has('optionKey') ) {
+        if (request()->has('optionKey')) {
             $data->where('id', request()->optionKey);
             return $data->first();
         }
@@ -297,16 +302,15 @@ class TipoArticuloController extends Controller {
 
     public function subcategorias(Request $request)
     {
-        $categoriaId = $request->input('categoriaId'); 
-        $categoriaSelect = $request->input('categoriaSelect');  
+        $categoriaId = $request->input('categoriaId');
+        $categoriaSelect = $request->input('categoriaSelect');
 
         $subcategorias = TipoArticulo::where('sub_categoria_id', $categoriaId)->where('oculto', 'false')->get();
 
         $productoRoute = $request->productoRoute;
 
-    
+
         return view('partials.subcategoria', compact('subcategorias', 'categoriaId', 'categoriaSelect', 'productoRoute'))->render();
-        
     }
 
     public function categorias()
@@ -318,21 +322,22 @@ class TipoArticuloController extends Controller {
             'categorias' => $categorias,
             'productos' => $productos
 
-        ]);         
+        ]);
     }
-    public function generarCodigoAlfabetico($index) {
+    public function generarCodigoAlfabetico($index)
+    {
         $letras = range('a', 'z');
         $primerLetra = $letras[intdiv($index, 26)];
         $segundaLetra = $letras[$index % 26];
-    
+
         return $primerLetra . $segundaLetra;
     }
 
-     function cargaProductos(){
-        {
+    function cargaProductos()
+    { {
             $client = new Client();
             $apiUrl = 'https://tytsaapi.ddns.net:8443/productos?maxCount=100&page=4'; // Asegúrate de que la URL sea correcta
-            
+
             try {
                 // Hacer una solicitud a la API
                 $respuesta = $client->request('GET', $apiUrl, [
@@ -347,87 +352,84 @@ class TipoArticuloController extends Controller {
                 $productos = json_decode($respuesta->getBody(), true); // Ajusta según la estructura de la respuesta
                 // dd($productos['values']);
                 foreach ($productos['values'] as $value) {
-                    
-                    
-                    
-                $categoria = TipoArticulo::where('name', $value['unidadNegocio'])->where('principal', 'true')->first();
 
-                if (!$categoria) {
-                    $categoria = new TipoArticulo();
-                    $categoria->name = $value['unidadNegocio'];
-                    $categoria->principal = 'true';
-                    $categoria->save();
-                }else{
-                    $categoria->name = $value['unidadNegocio'];
-                    $categoria->principal = 'true';
-                    $categoria->save();
+
+
+                    $categoria = TipoArticulo::where('name', $value['unidadNegocio'])->where('principal', 'true')->first();
+
+                    if (!$categoria) {
+                        $categoria = new TipoArticulo();
+                        $categoria->name = $value['unidadNegocio'];
+                        $categoria->principal = 'true';
+                        $categoria->save();
+                    } else {
+                        $categoria->name = $value['unidadNegocio'];
+                        $categoria->principal = 'true';
+                        $categoria->save();
+                    }
+
+
+                    $subCategoria = TipoArticulo::where('name', $value['familiaWeb'])->where('principal', 'false')->first();
+
+                    if (!$subCategoria) {
+                        $subCategoria = new TipoArticulo();
+                        $subCategoria->name = $value['familiaWeb'];
+                        $subCategoria->principal = 'false';
+                        $subCategoria->code = $value['tipoProducto'];
+                        $subCategoria->sub_categoria_id = $categoria->id;
+                        $subCategoria->save();
+                    } else {
+                        $subCategoria->name = $value['familiaWeb'];
+                        $subCategoria->principal = 'false';
+                        $subCategoria->code = $value['tipoProducto'];
+                        $subCategoria->sub_categoria_id = $categoria->id;
+                        $subCategoria->save();
+                    }
+
+
+
+
+
+                    $articulo = Articulo::where('code', $value['codigoProducto'])->first();
+
+
+                    if ($articulo) {
+                        $articulo->code = $value['codigoProducto'];
+                        $articulo->codigoAnterior = $value['codigoAnterior'];
+                        $articulo->tipoProducto = $value['tipoProducto'];
+                        $articulo->name = $value['productoDescripcion'];
+                        $articulo->description = $value['tipoDescripcion'];
+                        $articulo->precioVigente = $value['precioVigente'];
+                        $articulo->{'stock-disponible'} = $value['disponible'];
+                        $articulo->bultoMinorista = $value['bultoMinorista'];
+                        $articulo->bultoMayorista = $value['bultoMayorista'];
+                        $articulo->sub_categoria = $subCategoria->id;
+                        $articulo->categorias()->syncWithoutDetaching($subCategoria->id);
+                        $articulo->marca = $value['marca'];
+                        $articulo->orden = $this->generarCodigoAlfabetico($index);
+                        $index++;
+                        $articulo->save();
+                    } else {
+                        $articulo = new Articulo();
+                        $articulo->code = $value['codigoProducto'];
+                        $articulo->codigoAnterior = $value['codigoAnterior'];
+                        $articulo->orden = $this->generarCodigoAlfabetico($index);
+                        $index++;
+                        $articulo->tipoProducto = $value['tipoProducto'];
+                        $articulo->name = $value['productoDescripcion'];
+                        $articulo->description = $value['tipoDescripcion'];
+                        $articulo->precioVigente = $value['precioVigente'];
+                        $articulo->{'stock-disponible'} = $value['disponible'];
+                        $articulo->bultoMinorista = $value['bultoMinorista'];
+                        $articulo->bultoMayorista = $value['bultoMayorista'];
+                        $articulo->sub_categoria = $subCategoria->id;
+                        $articulo->categorias()->syncWithoutDetaching($subCategoria->id);
+                        $articulo->marca = $value['marca'];
+                        $articulo->save();
+                    }
                 }
 
 
-                $subCategoria = TipoArticulo::where('name', $value['familiaWeb'])->where('principal', 'false')->first();
-
-                if (!$subCategoria) {
-                    $subCategoria = new TipoArticulo();
-                    $subCategoria->name = $value['familiaWeb'];
-                    $subCategoria->principal = 'false';
-                    $subCategoria->code = $value['tipoProducto'];
-                    $subCategoria->sub_categoria_id = $categoria->id;
-                    $subCategoria->save();
-                }else{
-                    $subCategoria->name = $value['familiaWeb'];
-                    $subCategoria->principal = 'false';
-                    $subCategoria->code = $value['tipoProducto'];
-                    $subCategoria->sub_categoria_id = $categoria->id;
-                    $subCategoria->save();
-                }
-
-
-
-
-
-                $articulo = Articulo::where('code', $value['codigoProducto'])->first();
-                
-
-                if($articulo){
-                    $articulo->code = $value['codigoProducto'];
-                    $articulo->codigoAnterior = $value['codigoAnterior'];
-                    $articulo->tipoProducto = $value['tipoProducto'];
-                    $articulo->name = $value['productoDescripcion'];
-                    $articulo->description = $value['tipoDescripcion'];
-                    $articulo->precioVigente = $value['precioVigente'];
-                    $articulo->{'stock-disponible'} = $value['disponible'];
-                    $articulo->bultoMinorista = $value['bultoMinorista'];
-                    $articulo->bultoMayorista = $value['bultoMayorista'];
-                    $articulo->sub_categoria = $subCategoria->id;
-                    $articulo->categorias()->syncWithoutDetaching($subCategoria->id);
-                    $articulo->marca = $value['marca'];
-                    $articulo->orden = $this->generarCodigoAlfabetico($index);
-                    $index++;
-                    $articulo->save();
-                }else{
-                    $articulo = new Articulo();
-                    $articulo->code = $value['codigoProducto'];
-                    $articulo->codigoAnterior = $value['codigoAnterior'];
-                    $articulo->orden = $this->generarCodigoAlfabetico($index);
-                    $index++;
-                    $articulo->tipoProducto = $value['tipoProducto'];
-                    $articulo->name = $value['productoDescripcion'];
-                    $articulo->description = $value['tipoDescripcion'];
-                    $articulo->precioVigente = $value['precioVigente'];
-                    $articulo->{'stock-disponible'} = $value['disponible'];
-                    $articulo->bultoMinorista = $value['bultoMinorista'];
-                    $articulo->bultoMayorista = $value['bultoMayorista'];
-                    $articulo->sub_categoria = $subCategoria->id;
-                    $articulo->categorias()->syncWithoutDetaching($subCategoria->id);
-                    $articulo->marca = $value['marca'];
-                    $articulo->save();
-
-                }
-
-                    
-                }
-              
-    
                 return response()->json(['message' => 'Carga masiva completada']);
             } catch (\Exception $e) {
                 return response()->json(['error' => 'Error al obtener productos: ' . $e->getMessage()], 500);
@@ -435,30 +437,31 @@ class TipoArticuloController extends Controller {
         }
     }
 
-    function cargaClientes() {
+    function cargaClientes()
+    {
         $client = new Client();
         $baseApiUrl = 'https://tytsaapi.ddns.net:8443/clientes?maxCount=100&page='; // Base URL
-        
-        
+
+
         $clientesCreados = 0;
         $clientesActualizados = 0;
-    
+
         try {
-            
+
             for ($page = 0; $page <= 8; $page++) {
-               
+
                 $apiUrl = $baseApiUrl . $page;
-    
-              
+
+
                 $respuesta = $client->request('GET', $apiUrl, [
                     'headers' => [
                         'X-Api-Key' => 'AQEBEQtz8rVkLVvBKgmYuUmALBpS5GaLG28OUFpd3O08GlfjWrjH3wWt5Hk0GEra5MsMseWHtdise8FGiu3P7iNjEocjzW2T+IJ7c9TH0rbf17trDAc8qK4mAgvv3AMcu5CjuDwzR+9qS1uF5ZZwUNN/FFgD8HRRgkik86XZfttYSPK68RpnFSBrT2XDUTeXvcOdjTjzH7AwJDHj+o9WwskXIQT7Ubgj+oAaTjd4Obq+uyObg75n033Ct5ZO53JTHsvCDfbcMU1BtRtw4CvFynEPiEQ7rufWnDThqJQKqfLvSgBjr2c3L3QV8EKvuNsnNO9vQGrZbuY58sMTXGmMio1iTUxwrnOPpsCO9L4Jr1Onwgu+bIStiJcS2w/3hbzVWR2yo1YWvW0LjJquBNx1I46aUCiw82jHAffI788rrNNuYA8=', // Ajusta según la clave que necesitas usar
                     ],
-                    'verify' => false, 
+                    'verify' => false,
                 ]);
-    
-                $productos = json_decode($respuesta->getBody(), true); 
-    
+
+                $productos = json_decode($respuesta->getBody(), true);
+
                 foreach ($productos['values'] as $value) {
                     $cuenta = $value['cuenta'];
                     $razonSocial = $value['razonSocial'];
@@ -468,10 +471,10 @@ class TipoArticuloController extends Controller {
                     $vendedorDescripcion = $value['vendedorDescripcion'];
                     $codigoBonificacion = $value['codigoBonificacion'];
                     $bonificacionDescripcion = $value['bonificacionDescripcion'];
-    
+
                     // Buscar cliente por cuenta
                     $cliente = Cliente::where('cuenta', $cuenta)->first(); // Cambié get() a first()
-    
+
                     if ($cliente) {
                         // Si el cliente existe, actualiza sus datos
                         $cliente->razonSocial = $razonSocial;
@@ -483,7 +486,7 @@ class TipoArticuloController extends Controller {
                         $cliente->bonificacionDescripcion = $bonificacionDescripcion;
                         $cliente->descuento = $this->parseBonificacion($bonificacionDescripcion);
                         $cliente->save(); // Guarda los cambios
-    
+
                         // Incrementar contador de clientes actualizados
                         $clientesActualizados++;
                     } else {
@@ -500,13 +503,13 @@ class TipoArticuloController extends Controller {
                         $cliente->descuento = $this->parseBonificacion($bonificacionDescripcion);
 
                         $cliente->save(); // Guarda el nuevo cliente
-    
+
                         // Incrementar contador de clientes creados
                         $clientesCreados++;
                     }
                 }
             }
-    
+
             return response()->json([
                 'message' => 'Carga masiva completada',
                 'clientes_creados' => $clientesCreados,
@@ -517,14 +520,15 @@ class TipoArticuloController extends Controller {
         }
     }
 
-    function parseBonificacion($bonificacionDescripcion) {
+    function parseBonificacion($bonificacionDescripcion)
+    {
         // Verificamos si el valor contiene un operador + o -
         if (preg_match('/^(\d+)([+-])(\d+)$/', $bonificacionDescripcion, $matches)) {
             // Extraemos los números y el operador
             $num1 = (int) $matches[1];
             $operator = $matches[2];
             $num2 = (int) $matches[3];
-            
+
             // Realizamos la operación según el operador encontrado
             return $operator === '+' ? $num1 + $num2 : $num1 - $num2;
         } elseif (is_numeric($bonificacionDescripcion)) {
@@ -535,18 +539,12 @@ class TipoArticuloController extends Controller {
             return 0;
         }
     }
-    
-    function tieneProductos(Request $request){
+
+    function tieneProductos(Request $request)
+    {
         $categoria = TipoArticulo::where('sub_categoria_id', $request->categoriaId)->where('oculto', 'false')->first();
-        
-
-       return $categoria;
-        
-
-        
 
 
+        return $categoria;
     }
-
-
 }

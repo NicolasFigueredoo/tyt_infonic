@@ -99,12 +99,8 @@ Route::group(['prefix' => '/'], function () {
 
 Route::get('lang/{locale}', 'LocalizationController@lang')->name('locale');
 
-// Sincronizar categorías con el ERP (corre en background)
-Route::get('/adm/tipo-articulo/sincronizar', function () {
-    Cache::put('sincronizacion_estado', 'procesando', 600);
-    SincronizarCategoriasJob::dispatch();
-    return response()->json(['message' => 'Sincronización iniciada']);
-});
+Route::get('/adm/tipo-articulo/sincronizar', [TipoArticuloController::class, 'sincronizarCategorias']);
+
 
 // Estado de la sincronización (el frontend hace polling acá)
 Route::get('/adm/tipo-articulo/sincronizar-estado', function () {

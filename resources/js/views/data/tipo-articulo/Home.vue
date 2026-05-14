@@ -204,17 +204,13 @@ const sincronizar = () => {
         method: "GET",
     })
         .then((response) => {
-            if (!response.ok) {
-                throw new Error("Error del servidor: " + response.status);
-            }
+            if (!response.ok) throw new Error("Error del servidor: " + response.status);
             return response.json();
         })
         .then((data) => {
             modal.close();
             syncData();
-            setTimeout(() => {
-                awesomeModal.success("Sincronización completada correctamente");
-            }, 1000);
+            awesomeModal.success("Sincronización completada correctamente");
         })
         .catch((error) => {
             modal.close();
