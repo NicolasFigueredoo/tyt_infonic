@@ -1,8 +1,6 @@
 <template>
     <SectionHeader>
-        <template #title>
-            Categorias
-        </template>
+        <template #title> Categorias </template>
         <template #buttons>
             <!--
             <button
@@ -18,40 +16,38 @@
                 <i class="fas fa-upload"></i> Importar
             </button>
             -->
-            <router-link
-                class="btn btn--yellow"
-                to="/adm/data"
-            >
+            <router-link class="btn btn--yellow" to="/adm/data">
                 <i class="fas fa-arrow-left"></i> Volver
             </router-link>
-            <button
-                class="btn btn--gray"
-                @click="refreshData"
-            >
+            <button class="btn btn--gray" @click="sincronizar">
                 <i class="fas fa-sync-alt"></i> Actualizar
             </button>
-            
-            <router-link
-                to="/adm/tipo-articulo/add"
-                class="btn btn--green"
-            >
+
+            <router-link to="/adm/tipo-articulo/add" class="btn btn--green">
                 <i class="fas fa-plus"></i> Añadir
             </router-link>
         </template>
     </SectionHeader>
     <table>
         <thead>
-            <tr>     
-                <th>Orden</th>           
+            <tr>
+                <th>Orden</th>
                 <th>Nombre</th>
                 <th>Oculto</th>
                 <th>Destacado</th>
-                <th style='text-align: end;'>Acciones</th>
+                <th style="text-align: end">Acciones</th>
             </tr>
         </thead>
         <tbody>
             <tr class="table__search">
-                <td><input type="text" placeholder="NOMBRE" v-model="filters.name" @keyup.enter="applyFilters" /></td>                
+                <td>
+                    <input
+                        type="text"
+                        placeholder="NOMBRE"
+                        v-model="filters.name"
+                        @keyup.enter="applyFilters"
+                    />
+                </td>
                 <td></td>
                 <td></td>
                 <td>
@@ -65,12 +61,22 @@
                     </div>
                 </td>
             </tr>
-            <tr v-for="(item, key) in paginator.data" :key="key">      
-                <td>{{ item.orden }}</td>          
+            <tr v-for="(item, key) in paginator.data" :key="key">
+                <td>{{ item.orden }}</td>
                 <td>{{ item.name }}</td>
-                <td v-if="item.oculto == 'true'"><button @click="ocultar(item.id)"><i class="far fa-eye-slash"></i></button></td>
-                <td v-else><button @click="ocultar(item.id)"><i class="fas fa-eye"></i></button></td>
-                <td><i v-if="item.destacado == 'true'" class="fas fa-check"></i></td>
+                <td v-if="item.oculto == 'true'">
+                    <button @click="ocultar(item.id)">
+                        <i class="far fa-eye-slash"></i>
+                    </button>
+                </td>
+                <td v-else>
+                    <button @click="ocultar(item.id)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+                <td>
+                    <i v-if="item.destacado == 'true'" class="fas fa-check"></i>
+                </td>
                 <td class="btns d-flex justify-content-end">
                     <router-link
                         :to="'/adm/tipo-articulo/' + item.id + '/edit'"
@@ -84,10 +90,7 @@
                     >
                         <i class="fas fa-copy"></i>
                     </router-link>                     -->
-                    <button
-                        class="btn btn--red"
-                        @click="deleteItem(item.id)"
-                    >
+                    <button class="btn btn--red" @click="deleteItem(item.id)">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
@@ -97,115 +100,130 @@
 </template>
 
 <script setup>
-    import { reactive } from 'vue'
-    import { useRoute, useRouter } from 'vue-router'
+import { reactive } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-    const route = useRoute()
-    const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
-    const paginator = reactive({})
-    const exportData = () => {
-        alert('Característica no implementada')
+const paginator = reactive({});
+const exportData = () => {
+    alert("Característica no implementada");
+};
+const importData = () => {
+    alert("Característica no implementada");
+};
+
+const filters = reactive({
+    name: "",
+    username: "",
+    email: "",
+});
+
+const appliedFilters = reactive({
+    name: "",
+    username: "",
+    email: "",
+});
+
+const applyFilters = () => {
+    appliedFilters.code = filters.code;
+    appliedFilters.name = filters.name;
+    appliedFilters.description = filters.description;
+    refreshData();
+};
+
+const clearFilters = () => {
+    for (const key in filters) {
+        filters[key] = "";
     }
-    const importData = () => {
-        alert('Característica no implementada')
+    for (const key in appliedFilters) {
+        appliedFilters[key] = "";
     }
+    refreshData();
+};
 
-    const filters = reactive({
-        name: '',
-        username: '',
-        email: '',
-    })
-
-    const appliedFilters = reactive({
-        name: '',
-        username: '',
-        email: '',
-    })
-
-    const applyFilters = () => {
-        appliedFilters.code = filters.code
-        appliedFilters.name = filters.name
-        appliedFilters.description = filters.description
-        refreshData()
-    }
-
-    const clearFilters = () => {
-        for (const key in filters) {
-            filters[key] = ''
-        }
-        for (const key in appliedFilters) {
-            appliedFilters[key] = ''
-        }
-        refreshData()
-    }
-
-    const deleteItem = (id) => {
-        if (confirm('¿Está seguro de eliminar este registro?')) {
-            httpRequest({
-                url: window.public_path + '/adm/tipo-articulo/delete/' + id,
-                method: 'GET'
-            })
+const deleteItem = (id) => {
+    if (confirm("¿Está seguro de eliminar este registro?")) {
+        httpRequest({
+            url: window.public_path + "/adm/tipo-articulo/delete/" + id,
+            method: "GET",
+        })
             .then((data) => {
-                refreshData()
-                pagination.syncData()
+                refreshData();
+                pagination.syncData();
             })
-            .catch((error) => {})
+            .catch((error) => {});
+    }
+};
+
+const syncData = () => {
+    let modal = awesomeModal.loading();
+    let url = new URL(window.public_path + "/adm/tipo-articulo");
+    const form = new FormData();
+    for (const [key, value] of Object.entries(appliedFilters)) {
+        if (value) {
+            form.append("filters[" + key + "]", value);
         }
     }
+    // fetch using method POST
 
-
-    const syncData = () => {
-        let modal = awesomeModal.loading()
-        let url = new URL(window.public_path + '/adm/tipo-articulo')
-        const form = new FormData()
-        for (const [key, value] of Object.entries(appliedFilters)) {
-            if (value) {
-                form.append('filters[' + key + ']', value)
-            }
-        }
-        // fetch using method POST
-
-        fetch(url, {
-            method: 'POST',
-            body: form,
+    fetch(url, {
+        method: "POST",
+        body: form,
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+            Object.assign(paginator, data);
+            modal.close();
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
-            Object.assign(paginator, data)
-            modal.close()
-        })
-        .catch(error => {
-            modal.close()
+        .catch((error) => {
+            modal.close();
             // Código de estado: 401 Unauthorized
             if (error.response.status == 401) {
-                console.log('acceso denegado')
-                router.push('/adm/login')
-                return false
+                console.log("acceso denegado");
+                router.push("/adm/login");
+                return false;
             }
             // Código de estado: 422 Unprocessable Content
             if (error.response.status == 422) {
-                Object.assign(errors, error.response.data.errors)
-                return false
+                Object.assign(errors, error.response.data.errors);
+                return false;
             }
+        });
+};
+const ocultar = (id) => {
+    httpRequest({
+        url: window.public_path + "/adm/tipo-articulo/ocultar/" + id,
+        method: "GET",
+    })
+        .then((data) => {
+            syncData();
         })
-    }
-    const ocultar = (id) => {        
-        httpRequest({
-            url: window.public_path + '/adm/tipo-articulo/ocultar/' + id,
-            method: 'GET'
-        })
-        .then((data) => {            
-            syncData()
-        })
-        .catch((error) => {})        
-    }
-    const refreshData = () => {
-        syncData()
-    }
-    syncData()
+        .catch((error) => {});
+};
+const refreshData = () => {
+    syncData();
+};
+syncData();
+
+const sincronizar = () => {
+    let modal = awesomeModal.loading()
+    fetch(window.public_path + '/adm/tipo-articulo/sincronizar', {
+        method: 'GET',
+    })
+    .then(response => response.json())
+    .then(data => {
+        modal.close()
+        alert(data.message || 'Sincronización completada')
+        syncData() // recarga la tabla después de sincronizar
+    })
+    .catch(error => {
+        modal.close()
+        alert('Error al sincronizar')
+        console.error(error)
+    })
+}
 </script>
-<style lang="scss" scoped>
-    
-</style>
+<style lang="scss" scoped></style>
