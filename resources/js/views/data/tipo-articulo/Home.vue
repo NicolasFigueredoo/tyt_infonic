@@ -2,27 +2,12 @@
     <SectionHeader>
         <template #title> Categorias </template>
         <template #buttons>
-            <!--
-            <button
-                class="btn btn--gray"
-                @click="exportData"
-            >
-                <i class="fas fa-download"></i> Exportar
-            </button>
-            <button
-                class="btn btn--gray"
-                @click="importData"
-            >
-                <i class="fas fa-upload"></i> Importar
-            </button>
-            -->
             <router-link class="btn btn--yellow" to="/adm/data">
                 <i class="fas fa-arrow-left"></i> Volver
             </router-link>
             <button class="btn btn--gray" @click="sincronizar">
                 <i class="fas fa-sync-alt"></i> Actualizar
             </button>
-
             <router-link to="/adm/tipo-articulo/add" class="btn btn--green">
                 <i class="fas fa-plus"></i> Añadir
             </router-link>
@@ -84,12 +69,6 @@
                     >
                         <i class="fas fa-edit"></i>
                     </router-link>
-                    <!-- <router-link
-                        :to="'/adm/tipo-articulo/' + item.id + '/copy'"
-                        class="btn btn--yellow"
-                    >
-                        <i class="fas fa-copy"></i>
-                    </router-link>                     -->
                     <button class="btn btn--red" @click="deleteItem(item.id)">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -107,24 +86,9 @@ const route = useRoute();
 const router = useRouter();
 
 const paginator = reactive({});
-const exportData = () => {
-    alert("Característica no implementada");
-};
-const importData = () => {
-    alert("Característica no implementada");
-};
 
-const filters = reactive({
-    name: "",
-    username: "",
-    email: "",
-});
-
-const appliedFilters = reactive({
-    name: "",
-    username: "",
-    email: "",
-});
+const filters = reactive({ name: "", username: "", email: "" });
+const appliedFilters = reactive({ name: "", username: "", email: "" });
 
 const applyFilters = () => {
     appliedFilters.code = filters.code;
@@ -134,12 +98,8 @@ const applyFilters = () => {
 };
 
 const clearFilters = () => {
-    for (const key in filters) {
-        filters[key] = "";
-    }
-    for (const key in appliedFilters) {
-        appliedFilters[key] = "";
-    }
+    for (const key in filters) filters[key] = "";
+    for (const key in appliedFilters) appliedFilters[key] = "";
     refreshData();
 };
 
@@ -149,11 +109,8 @@ const deleteItem = (id) => {
             url: window.public_path + "/adm/tipo-articulo/delete/" + id,
             method: "GET",
         })
-            .then((data) => {
-                refreshData();
-                pagination.syncData();
-            })
-            .catch((error) => {});
+            .then(() => refreshData())
+            .catch(() => {});
     }
 };
 
@@ -162,19 +119,11 @@ const syncData = () => {
     let url = new URL(window.public_path + "/adm/tipo-articulo");
     const form = new FormData();
     for (const [key, value] of Object.entries(appliedFilters)) {
-        if (value) {
-            form.append("filters[" + key + "]", value);
-        }
+        if (value) form.append("filters[" + key + "]", value);
     }
-    // fetch using method POST
-
-    fetch(url, {
-        method: "POST",
-        body: form,
-    })
+    fetch(url, { method: "POST", body: form })
         .then((response) => response.json())
         .then((data) => {
-            console.log(data);
             Object.assign(paginator, data);
             modal.close();
         })
@@ -183,20 +132,17 @@ const syncData = () => {
             console.error(error);
         });
 };
+
 const ocultar = (id) => {
     httpRequest({
         url: window.public_path + "/adm/tipo-articulo/ocultar/" + id,
         method: "GET",
     })
-        .then((data) => {
-            syncData();
-        })
-        .catch((error) => {});
+        .then(() => syncData())
+        .catch(() => {});
 };
-const refreshData = () => {
-    syncData();
-};
-syncData();
+
+const refreshData = () => syncData();
 
 const sincronizar = () => {
     let modal = awesomeModal.loading("Sincronizando con el ERP, por favor espere...");
@@ -210,13 +156,16 @@ const sincronizar = () => {
         .then((data) => {
             modal.close();
             syncData();
-            awesomeModal.success("Sincronización completada correctamente");
+            alert("Sincronización completada correctamente");
         })
         .catch((error) => {
             modal.close();
-            awesomeModal.error("Error al sincronizar: " + error.message);
+            alert("Error al sincronizar: " + error.message);
             console.error(error);
         });
 };
+
+syncData();
 </script>
+
 <style lang="scss" scoped></style>
