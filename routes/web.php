@@ -17,6 +17,8 @@ use App\Models\Articulo;
 use App\Models\Cliente;
 use App\Http\Controllers\Admin\ClienteController;
 use App\Http\Controllers\SitemapController;
+use App\Jobs\SincronizarCategoriasJob;
+use Illuminate\Support\Facades\Cache;
 
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])
@@ -39,10 +41,8 @@ Route::get('install-storage', function () {
 
 
 Route::get('/clear-cache', function () {
-    // \Artisan::call('clear-compiled');
     \Artisan::call('cache:clear');
     \Artisan::call('config:clear');
-    // \Artisan::call('optimize:clear');
     \Artisan::call('route:clear');
     \Artisan::call('view:clear');
 
@@ -89,7 +89,6 @@ Route::group(['prefix' => '/'], function () {
 
     Route::get('/registro', [LoginClienteController::class, 'registro_cliente'])->name('page.registro');
     Route::post('/registro', [LoginClienteController::class, 'registro_cliente_post'])->name('page.nuevoclienteform');
-    ///RESET PASSWORD
     Route::get('/forgot-password', [PageController::class, 'password'])->name('password');
     Route::post('/forgot-password', [PageController::class, 'passwordpost'])->name('passwordpost');
 
@@ -99,7 +98,19 @@ Route::group(['prefix' => '/'], function () {
 });
 
 Route::get('lang/{locale}', 'LocalizationController@lang')->name('locale');
-Route::get('/adm/tipo-articulo/sincronizar', [TipoArticuloController::class, 'sincronizarCategorias']);
+
+// Sincronizar categorías con el ERP (corre en background)
+Route::get('/adm/tipo-articulo/sincronizar', function () {
+    Cache::put('sincronizacion_estado', 'procesando', 600);
+    SincronizarCategoriasJob::dispatch();
+    return response()->json(['message' => 'Sincronización iniciada']);
+});
+
+// Estado de la sincronización (el frontend hace polling acá)
+Route::get('/adm/tipo-articulo/sincronizar-estado', function () {
+    $estado = Cache::get('sincronizacion_estado', 'idle');
+    return response()->json(['estado' => $estado]);
+});
 
 Route::post('/subcategorias', [TipoArticuloController::class, 'subcategorias'])->name('subcategorias');
 Route::post('/tieneProductos', [TipoArticuloController::class, 'tieneProductos'])->name('tieneProductos');
@@ -108,7 +119,6 @@ Route::get('/cargaProductos', [TipoArticuloController::class, 'cargaProductos'])
 Route::get('/cargaClientes', [TipoArticuloController::class, 'cargaClientes'])->name('cargaClientes');
 
 Route::post('/changeIdioma', [InicioController::class, 'changeIdioma'])->name('changeIdioma');
-
 
 Route::post('/guardar-cantidad', [ArticuloController::class, 'guardarCantidadEnSesion'])->name('guardar.cantidad');
 
@@ -144,12 +154,10 @@ Route::get('/adm', function () {
     return view('welcome');
 });
 
-
 // endpoint JSON para Clientes paginados
 Route::get('/adm/clientes', [ClienteController::class, 'all']);
 Route::get('/adm/clientes/{page}', [ClienteController::class, 'all'])
     ->where('page', '[0-9]+');
-
 
 Route::get('adm/{any}', function () {
     return view('welcome');

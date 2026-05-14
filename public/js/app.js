@@ -34328,20 +34328,20 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     var router = (0,vue_router__WEBPACK_IMPORTED_MODULE_1__.useRouter)();
     var paginator = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({});
     var exportData = function exportData() {
-      alert('Característica no implementada');
+      alert("Característica no implementada");
     };
     var importData = function importData() {
-      alert('Característica no implementada');
+      alert("Característica no implementada");
     };
     var filters = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({
-      name: '',
-      username: '',
-      email: ''
+      name: "",
+      username: "",
+      email: ""
     });
     var appliedFilters = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({
-      name: '',
-      username: '',
-      email: ''
+      name: "",
+      username: "",
+      email: ""
     });
     var applyFilters = function applyFilters() {
       appliedFilters.code = filters.code;
@@ -34351,18 +34351,18 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     };
     var clearFilters = function clearFilters() {
       for (var key in filters) {
-        filters[key] = '';
+        filters[key] = "";
       }
       for (var _key in appliedFilters) {
-        appliedFilters[_key] = '';
+        appliedFilters[_key] = "";
       }
       refreshData();
     };
     var deleteItem = function deleteItem(id) {
-      if (confirm('¿Está seguro de eliminar este registro?')) {
+      if (confirm("¿Está seguro de eliminar este registro?")) {
         httpRequest({
-          url: window.public_path + '/adm/tipo-articulo/delete/' + id,
-          method: 'GET'
+          url: window.public_path + "/adm/tipo-articulo/delete/" + id,
+          method: "GET"
         }).then(function (data) {
           refreshData();
           pagination.syncData();
@@ -34371,20 +34371,20 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     };
     var syncData = function syncData() {
       var modal = awesomeModal.loading();
-      var url = new URL(window.public_path + '/adm/tipo-articulo');
+      var url = new URL(window.public_path + "/adm/tipo-articulo");
       var form = new FormData();
       for (var _i = 0, _Object$entries = Object.entries(appliedFilters); _i < _Object$entries.length; _i++) {
         var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
           key = _Object$entries$_i[0],
           value = _Object$entries$_i[1];
         if (value) {
-          form.append('filters[' + key + ']', value);
+          form.append("filters[" + key + "]", value);
         }
       }
       // fetch using method POST
 
       fetch(url, {
-        method: 'POST',
+        method: "POST",
         body: form
       }).then(function (response) {
         return response.json();
@@ -34394,23 +34394,13 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         modal.close();
       })["catch"](function (error) {
         modal.close();
-        // Código de estado: 401 Unauthorized
-        if (error.response.status == 401) {
-          console.log('acceso denegado');
-          router.push('/adm/login');
-          return false;
-        }
-        // Código de estado: 422 Unprocessable Content
-        if (error.response.status == 422) {
-          Object.assign(errors, error.response.data.errors);
-          return false;
-        }
+        console.error(error);
       });
     };
     var ocultar = function ocultar(id) {
       httpRequest({
-        url: window.public_path + '/adm/tipo-articulo/ocultar/' + id,
-        method: 'GET'
+        url: window.public_path + "/adm/tipo-articulo/ocultar/" + id,
+        method: "GET"
       }).then(function (data) {
         syncData();
       })["catch"](function (error) {});
@@ -34419,6 +34409,27 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       syncData();
     };
     syncData();
+    var sincronizar = function sincronizar() {
+      var modal = awesomeModal.loading("Sincronizando con el ERP, por favor espere...");
+      fetch(window.public_path + "/adm/tipo-articulo/sincronizar", {
+        method: "GET"
+      }).then(function (response) {
+        if (!response.ok) {
+          throw new Error("Error del servidor: " + response.status);
+        }
+        return response.json();
+      }).then(function (data) {
+        modal.close();
+        syncData();
+        setTimeout(function () {
+          awesomeModal.success("Sincronización completada correctamente");
+        }, 1000);
+      })["catch"](function (error) {
+        modal.close();
+        awesomeModal.error("Error al sincronizar: " + error.message);
+        console.error(error);
+      });
+    };
     var __returned__ = {
       route: route,
       router: router,
@@ -34433,6 +34444,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       syncData: syncData,
       ocultar: ocultar,
       refreshData: refreshData,
+      sincronizar: sincronizar,
       reactive: vue__WEBPACK_IMPORTED_MODULE_0__.reactive,
       get useRoute() {
         return vue_router__WEBPACK_IMPORTED_MODULE_1__.useRoute;
@@ -48646,7 +48658,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         _: 1 /* STABLE */
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
         "class": "btn btn--gray",
-        onClick: $setup.refreshData
+        onClick: $setup.sincronizar
       }, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Actualizar ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
         to: "/adm/tipo-articulo/add",
         "class": "btn btn--green"

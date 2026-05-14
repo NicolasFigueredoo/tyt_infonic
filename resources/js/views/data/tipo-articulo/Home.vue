@@ -180,17 +180,7 @@ const syncData = () => {
         })
         .catch((error) => {
             modal.close();
-            // Código de estado: 401 Unauthorized
-            if (error.response.status == 401) {
-                console.log("acceso denegado");
-                router.push("/adm/login");
-                return false;
-            }
-            // Código de estado: 422 Unprocessable Content
-            if (error.response.status == 422) {
-                Object.assign(errors, error.response.data.errors);
-                return false;
-            }
+            console.error(error);
         });
 };
 const ocultar = (id) => {
@@ -209,21 +199,28 @@ const refreshData = () => {
 syncData();
 
 const sincronizar = () => {
-    let modal = awesomeModal.loading()
-    fetch(window.public_path + '/adm/tipo-articulo/sincronizar', {
-        method: 'GET',
+    let modal = awesomeModal.loading("Sincronizando con el ERP, por favor espere...");
+    fetch(window.public_path + "/adm/tipo-articulo/sincronizar", {
+        method: "GET",
     })
-    .then(response => response.json())
-    .then(data => {
-        modal.close()
-        alert(data.message || 'Sincronización completada')
-        syncData() // recarga la tabla después de sincronizar
-    })
-    .catch(error => {
-        modal.close()
-        alert('Error al sincronizar')
-        console.error(error)
-    })
-}
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Error del servidor: " + response.status);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            modal.close();
+            syncData();
+            setTimeout(() => {
+                awesomeModal.success("Sincronización completada correctamente");
+            }, 1000);
+        })
+        .catch((error) => {
+            modal.close();
+            awesomeModal.error("Error al sincronizar: " + error.message);
+            console.error(error);
+        });
+};
 </script>
 <style lang="scss" scoped></style>
