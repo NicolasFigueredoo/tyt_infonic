@@ -73,6 +73,13 @@ Route::group(['prefix' => '/'], function () {
     Route::post('/forgot-password', [PageController::class, 'passwordpost'])->name('passwordpost');
 });
 
+// RUTA TEMPORAL DE PRUEBA - borrar después
+Route::get('/test-activar-cuenta', function () {
+    $inicio = \App\Models\Inicio::first();
+    $active = '';
+    return view('page.activarCuenta', compact('active', 'inicio'));
+});
+
 Route::get('lang/{locale}', 'LocalizationController@lang')->name('locale');
 
 Route::get('/adm/tipo-articulo/sincronizar', [TipoArticuloController::class, 'sincronizarCategorias']);

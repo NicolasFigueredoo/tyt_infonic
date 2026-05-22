@@ -10,6 +10,19 @@
     </div>
 
     <div class="d-flex justify-content-center">
+        <div class="text-center px-3 mb-4" style="max-width: 700px; font-size: 16px; color: #333;">
+            @if (session('locale') === 'es')
+                Completá el siguiente formulario (solo te tomará un minuto) y registrate como cliente mayorista para acceder
+                a nuestra lista de precios. Una vez completado, nuestro departamento de ventas se estará comunicando en los
+                próximos cinco días hábiles.
+            @else
+                Fill out the following form (it will only take a minute) and register as a wholesale customer to access our
+                price list. Once completed, our sales department will be in touch within the next five business days.
+            @endif
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center">
         @if (session('success'))
             <div class="alert alert-success box_container">{{ session('success') }}</div>
         @endif
@@ -22,59 +35,9 @@
         <div
             class="d-flex flex-row justify-content-start align-items-center align-items-md-start flex-wrap m-1 m-md-5 box_container">
 
-            {{-- FORM LOGIN --}}
-            <form class="col-4" method="POST" action="{{ route('login.clientes') }}">
-                @csrf
-                <span style="color:#F15E40;font-size:24px;">
-                    @if (session('locale') === 'es')
-                        <b>Iniciar sesi&oacute;n</b>
-                    @else
-                        <b>login</b>
-                    @endif
-                </span>
-                <div class="mt-3 form-group row d-flex justify-content-start align-items-center">
-                    <div class="col-md-10">
-                        <span style="color:#000;font-size:16px;">
-                            @if (session('locale') === 'es')
-                                <b>Email</b>
-                            @else
-                                <b>Mail</b>
-                            @endif
-                        </span>
-                        <input style="background:transparent;color:#000;border-color:#F15E40;" id="username" type="text"
-                            class="form-control @error('username') is-invalid @enderror" name="username"
-                            value="{{ old('username') }}" autocomplete="username" autofocus>
-                    </div>
-                </div>
-                <div class="mt-3 form-group row d-flex justify-content-start align-items-center">
-                    <div class="col-md-10">
-                        <span style="color:#000;font-size:16px;"><b>
-                                @if (session('locale') === 'es')
-                                    Contraseña
-                                @else
-                                    Password
-                                @endif
-                            </b></span>
-                        <input style="background:transparent;color:#000;border-color:#F15E40;" id="password"
-                            type="password" class="form-control @error('password') is-invalid @enderror" name="password"
-                            autocomplete="current-password">
-                    </div>
-                </div>
-                <div class="mt-3 form-group row mb-0 d-flex justify-content-start align-items-center">
-                    <div class="col-md-10 d-flex justify-content-center align-items-center">
-                        <button style="background:#F15E40;color: #fff;" type="submit" class="btn w-100">
-                            @if (session('locale') === 'es')
-                                INGRESAR
-                            @else
-                                GET INTO
-                            @endif
-                        </button>
-                    </div>
-                </div>
-            </form>
-
             {{-- FORM REGISTRO --}}
-            <form class="col-8" method="post" action="{{ route('page.nuevocliente') }}" enctype="multipart/form-data">
+            <form id="formRegistro" class="col-12" method="post" action="{{ route('page.nuevocliente') }}"
+                enctype="multipart/form-data">
                 @csrf
                 <div class="row px-4">
 
@@ -91,13 +54,11 @@
                                 $opciones = $campo->opciones ? json_decode($campo->opciones, true) : [];
                                 $tieneOtro = $campo->tiene_otro ?? false;
 
-                                $nameKey = 'campo_' . $campo->id; // ej: campo_12
-                                $otroKey = 'campo_otro_' . $campo->id; // ej: campo_otro_12
+                                $nameKey = 'campo_' . $campo->id;
+                                $otroKey = 'campo_otro_' . $campo->id;
 
-                                // Valor old del campo principal
                                 $oldValue = old($nameKey);
 
-                                // Para checkboxes/image_choice viene como array
                                 $oldArray = is_array($oldValue)
                                     ? $oldValue
                                     : (is_string($oldValue)
@@ -105,13 +66,8 @@
                                         : []);
                                 $oldArray = is_array($oldArray) ? $oldArray : [];
 
-                                // Valor del "otro" (si existe)
                                 $oldOtro = old($otroKey);
 
-                                // Mostrar input "otro" si:
-                                // - en select: old == '__otro__'
-                                // - en radio: old == '__otro__'
-                                // - en checkbox: si existe oldOtro (porque el checkbox "Otro" en tu UI no tiene name)
                                 $showOtroSelectRadio = $oldValue === '__otro__';
                                 $showOtroCheckbox = !empty($oldOtro);
                             @endphp
@@ -119,35 +75,36 @@
                             {{-- Texto corto --}}
                             @if ($campo->tipo === 'text')
                                 <input type="text" class="form-control" name="{{ $nameKey }}"
-                                    value="{{ old($nameKey) }}" placeholder="{{ $campo->placeholder }}"
-                                    {{ $campo->requerido ? 'required' : '' }}>
+                                    data-label="{{ $campo->label }}" value="{{ old($nameKey) }}"
+                                    placeholder="{{ $campo->placeholder }}" {{ $campo->requerido ? 'required' : '' }}>
 
-                                {{-- Texto largo --}}
+                            {{-- Texto largo --}}
                             @elseif($campo->tipo === 'textarea')
-                                <textarea class="form-control" rows="3" name="{{ $nameKey }}" placeholder="{{ $campo->placeholder }}"
-                                    {{ $campo->requerido ? 'required' : '' }}>{{ old($nameKey) }}</textarea>
+                                <textarea class="form-control" rows="3" name="{{ $nameKey }}" data-label="{{ $campo->label }}"
+                                    placeholder="{{ $campo->placeholder }}" {{ $campo->requerido ? 'required' : '' }}>{{ old($nameKey) }}</textarea>
 
-                                {{-- Email --}}
+                            {{-- Email --}}
                             @elseif($campo->tipo === 'email')
                                 <input type="email" class="form-control" name="{{ $nameKey }}"
-                                    value="{{ old($nameKey) }}" placeholder="{{ $campo->placeholder }}"
-                                    {{ $campo->requerido ? 'required' : '' }}>
+                                    data-label="{{ $campo->label }}" value="{{ old($nameKey) }}"
+                                    placeholder="{{ $campo->placeholder }}" {{ $campo->requerido ? 'required' : '' }}>
 
-                                {{-- Número --}}
+                            {{-- Número --}}
                             @elseif($campo->tipo === 'number')
                                 <input type="number" class="form-control" name="{{ $nameKey }}"
-                                    value="{{ old($nameKey) }}" placeholder="{{ $campo->placeholder }}"
-                                    {{ $campo->requerido ? 'required' : '' }}>
+                                    data-label="{{ $campo->label }}" value="{{ old($nameKey) }}"
+                                    placeholder="{{ $campo->placeholder }}" {{ $campo->requerido ? 'required' : '' }}>
 
-                                {{-- Link --}}
+                            {{-- Link --}}
                             @elseif($campo->tipo === 'link')
                                 <input type="url" class="form-control" name="{{ $nameKey }}"
-                                    value="{{ old($nameKey) }}" placeholder="{{ $campo->placeholder ?? 'https://' }}"
+                                    data-label="{{ $campo->label }}" value="{{ old($nameKey) }}"
+                                    placeholder="{{ $campo->placeholder ?? 'https://' }}"
                                     {{ $campo->requerido ? 'required' : '' }}>
 
-                                {{-- Select --}}
+                            {{-- Select --}}
                             @elseif($campo->tipo === 'select')
-                                <select class="form-control" name="{{ $nameKey }}"
+                                <select class="form-control" name="{{ $nameKey }}" data-label="{{ $campo->label }}"
                                     {{ $campo->requerido ? 'required' : '' }}
                                     @if ($tieneOtro) onchange="toggleOtro(this, {{ $campo->id }})" @endif>
                                     <option value="">-- Seleccioná una opción --</option>
@@ -170,11 +127,12 @@
                                         style="display: {{ $showOtroSelectRadio ? 'block' : 'none' }}">
                                 @endif
 
-                                {{-- Radio --}}
+                            {{-- Radio --}}
                             @elseif($campo->tipo === 'radio')
                                 @foreach ($opciones as $op)
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="{{ $nameKey }}"
+                                            data-label="{{ $campo->label }}"
                                             id="campo_{{ $campo->id }}_{{ $loop->index }}"
                                             value="{{ $op }}"
                                             {{ (string) old($nameKey) === (string) $op ? 'checked' : '' }}
@@ -188,23 +146,23 @@
                                 @if ($tieneOtro)
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="{{ $nameKey }}"
-                                            id="campo_{{ $campo->id }}_otro" value="__otro__"
-                                            {{ old($nameKey) === '__otro__' ? 'checked' : '' }}
+                                            data-label="{{ $campo->label }}" id="campo_{{ $campo->id }}_otro"
+                                            value="__otro__" {{ old($nameKey) === '__otro__' ? 'checked' : '' }}
                                             onchange="toggleOtroRadio(this, {{ $campo->id }})">
                                         <label class="form-check-label" for="campo_{{ $campo->id }}_otro">Otro</label>
                                     </div>
-
                                     <input type="text" class="form-control mt-2" id="campo_otro_{{ $campo->id }}"
                                         name="{{ $otroKey }}" value="{{ old($otroKey) }}"
                                         placeholder="Especificá cuál..."
                                         style="display: {{ $showOtroSelectRadio ? 'block' : 'none' }}">
                                 @endif
 
-                                {{-- Checkbox --}}
+                            {{-- Checkbox --}}
                             @elseif($campo->tipo === 'checkbox')
                                 @foreach ($opciones as $op)
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="{{ $nameKey }}[]"
+                                            data-label="{{ $campo->label }}"
                                             id="campo_{{ $campo->id }}_{{ $loop->index }}"
                                             value="{{ $op }}"
                                             {{ in_array((string) $op, array_map('strval', old($nameKey, []))) ? 'checked' : '' }}>
@@ -215,25 +173,23 @@
 
                                 @if ($tieneOtro)
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox"
-                                            id="chk_otro_{{ $campo->id }}" {{ $showOtroCheckbox ? 'checked' : '' }}
+                                        <input class="form-check-input" type="checkbox" id="chk_otro_{{ $campo->id }}"
+                                            {{ $showOtroCheckbox ? 'checked' : '' }}
                                             onchange="toggleOtroCheck(this, {{ $campo->id }})">
                                         <label class="form-check-label" for="chk_otro_{{ $campo->id }}">Otro</label>
                                     </div>
-
                                     <input type="text" class="form-control mt-2" id="campo_otro_{{ $campo->id }}"
                                         name="{{ $otroKey }}" value="{{ old($otroKey) }}"
                                         placeholder="Especificá cuál..."
                                         style="display: {{ $showOtroCheckbox ? 'block' : 'none' }}">
                                 @endif
 
-                                {{-- Archivo --}}
+                            {{-- Archivo --}}
                             @elseif($campo->tipo === 'file')
                                 <input type="file" class="form-control" name="{{ $nameKey }}"
-                                    {{ $campo->requerido ? 'required' : '' }}>
-                                {{-- Nota: por seguridad, los file inputs NO pueden precargarse con old() --}}
+                                    data-label="{{ $campo->label }}" {{ $campo->requerido ? 'required' : '' }}>
 
-                                {{-- Elección por imagen --}}
+                            {{-- Elección por imagen --}}
                             @elseif($campo->tipo === 'image_choice')
                                 <div class="image-choice-grid">
                                     @foreach ($opciones as $i => $op)
@@ -241,11 +197,10 @@
                                             $val = $op['label'] ?? 'Opción ' . ($i + 1);
                                             $checked = in_array((string) $val, array_map('strval', old($nameKey, [])));
                                         @endphp
-
                                         <label class="image-choice-card {{ $checked ? 'selected' : '' }}"
                                             for="campo_{{ $campo->id }}_{{ $i }}">
                                             <input type="checkbox" class="image-choice-input"
-                                                name="{{ $nameKey }}[]"
+                                                name="{{ $nameKey }}[]" data-label="{{ $campo->label }}"
                                                 id="campo_{{ $campo->id }}_{{ $i }}"
                                                 value="{{ $val }}" {{ $checked ? 'checked' : '' }}
                                                 onchange="toggleImageCard(this)">
@@ -267,18 +222,51 @@
                     @endforeach
 
                     <div class="form-group col-12 mb-4">
-                        <button type="submit" style="background: #F15E40; border: white" class="btn btn-success my-3">
+                        {{-- type="button": no dispara submit, lo manejamos desde JS --}}
+                        <button type="button" id="btnEnviar" style="background: #F15E40; border: white"
+                            class="btn btn-success my-3">
                             @if (session('locale') === 'es')
                                 Crear cuenta
                             @else
                                 Create account
                             @endif
                         </button>
+
+                        {{-- Botón oculto que dispara el submit real (activa reCAPTCHA v3) --}}
+                        <button type="submit" id="btnSubmitReal" style="display:none"></button>
                     </div>
 
                 </div>
             </form>
+        </div>
+    </div>
 
+    {{-- Modal de confirmación --}}
+    <div class="modal fade" id="modalConfirmarDatos" tabindex="-1" aria-labelledby="modalConfirmarDatosLabel"
+        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header" style="border-bottom: 2px solid #F15E40;">
+                    <h5 class="modal-title" id="modalConfirmarDatosLabel" style="color: #F15E40; font-weight: bold;">
+                        Revisá tus datos
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-4" style="font-size: 15px; color: #333;">
+                        Por favor corroborá que tus datos de contacto sean los correctos.
+                    </p>
+                    <ul class="list-group list-group-flush" id="modalDatosLista"></ul>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary" id="btnEditarDatos">
+                        <i class="fas fa-pencil-alt me-1"></i> Editar datos
+                    </button>
+                    <button type="button" class="btn" id="btnConfirmarEnvio"
+                        style="background:#F15E40; color:#fff; min-width: 140px;">
+                        <i class="fas fa-check me-1"></i> Confirmar y enviar
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -352,28 +340,135 @@
         .image-choice-card.selected .image-choice-check {
             display: flex;
         }
+
+        #modalDatosLista .list-group-item {
+            padding: 10px 4px;
+            font-size: 14px;
+        }
+
+        #modalDatosLista .list-group-item span:first-child {
+            color: #555;
+            min-width: 180px;
+        }
+
+        #modalDatosLista .list-group-item span:last-child {
+            font-weight: 600;
+            color: #222;
+            text-align: right;
+        }
     </style>
 
     <script>
-        function toggleImageCard(input) {
-            input.closest('.image-choice-card').classList.toggle('selected', input.checked);
-        }
+        document.addEventListener('DOMContentLoaded', function () {
 
-        function toggleOtro(select, campoId) {
-            var input = document.getElementById('campo_otro_' + campoId);
-            input.style.display = select.value === '__otro__' ? 'block' : 'none';
-            input.required = select.value === '__otro__';
-        }
+            /* ---------- helpers de tipo "otro" ---------- */
+            window.toggleImageCard = function (input) {
+                input.closest('.image-choice-card').classList.toggle('selected', input.checked);
+            };
 
-        function toggleOtroRadio(radio, campoId) {
-            var input = document.getElementById('campo_otro_' + campoId);
-            input.style.display = radio.value === '__otro__' ? 'block' : 'none';
-            input.required = radio.value === '__otro__';
-        }
+            window.toggleOtro = function (select, campoId) {
+                var input = document.getElementById('campo_otro_' + campoId);
+                if (!input) return;
+                input.style.display = select.value === '__otro__' ? 'block' : 'none';
+                input.required = select.value === '__otro__';
+            };
 
-        function toggleOtroCheck(checkbox, campoId) {
-            var input = document.getElementById('campo_otro_' + campoId);
-            input.style.display = checkbox.checked ? 'block' : 'none';
-        }
+            window.toggleOtroRadio = function (radio, campoId) {
+                var input = document.getElementById('campo_otro_' + campoId);
+                if (!input) return;
+                input.style.display = radio.value === '__otro__' ? 'block' : 'none';
+                input.required = radio.value === '__otro__';
+            };
+
+            window.toggleOtroCheck = function (checkbox, campoId) {
+                var input = document.getElementById('campo_otro_' + campoId);
+                if (!input) return;
+                input.style.display = checkbox.checked ? 'block' : 'none';
+            };
+
+            /* ---------- referencias ---------- */
+            var btnEnviar    = document.getElementById('btnEnviar');
+            var btnConfirmar = document.getElementById('btnConfirmarEnvio');
+            var btnEditar    = document.getElementById('btnEditarDatos');
+            var btnSubmit    = document.getElementById('btnSubmitReal');
+            var form         = document.getElementById('formRegistro');
+            var modalEl      = document.getElementById('modalConfirmarDatos');
+            var lista        = document.getElementById('modalDatosLista');
+
+            if (!btnEnviar || !form || !modalEl) {
+                console.error('Elementos no encontrados', { btnEnviar, form, modalEl });
+                return;
+            }
+
+            /* ---------- click "Crear cuenta" → validar y mostrar modal ---------- */
+            btnEnviar.addEventListener('click', function () {
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                // Construir lista de datos del formulario
+                lista.innerHTML = '';
+                var visto = {};
+
+                form.querySelectorAll('[data-label]').forEach(function (el) {
+                    var label = el.getAttribute('data-label');
+                    var tipo  = el.type;
+                    var valor = '';
+
+                    // Ignorar inputs internos de "otro"
+                    if (el.name && el.name.indexOf('campo_otro_') === 0) return;
+
+                    if (tipo === 'radio') {
+                        if (!el.checked) return;
+                        valor = el.value === '__otro__'
+                            ? (document.getElementById('campo_otro_' + el.name.replace('campo_', '')) || {}).value || 'Otro'
+                            : el.value;
+                    } else if (tipo === 'checkbox') {
+                        if (!el.checked) return;
+                        valor = el.value;
+                        // Acumular múltiples checkboxes del mismo label
+                        if (visto[label]) {
+                            var existing = lista.querySelector('[data-label-key="' + label + '"] span:last-child');
+                            if (existing) existing.textContent += ', ' + valor;
+                            return;
+                        }
+                    } else if (tipo === 'file') {
+                        valor = el.files && el.files.length ? el.files[0].name : '(sin archivo)';
+                    } else if (el.tagName === 'SELECT') {
+                        valor = el.options[el.selectedIndex] ? el.options[el.selectedIndex].text : '';
+                        if (valor === '-- Seleccioná una opción --') valor = '';
+                        if (el.value === '__otro__') {
+                            valor = (document.getElementById('campo_otro_' + el.name.replace('campo_', '')) || {}).value || 'Otro';
+                        }
+                    } else {
+                        valor = el.value || '';
+                    }
+
+                    if (!valor && tipo !== 'checkbox') return;
+
+                    visto[label] = true;
+
+                    var li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-start';
+                    li.setAttribute('data-label-key', label);
+                    li.innerHTML = '<span>' + label + '</span><span>' + valor + '</span>';
+                    lista.appendChild(li);
+                });
+
+                var modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            });
+
+            /* ---------- click "Confirmar y enviar" → submit real (dispara reCAPTCHA) ---------- */
+            btnConfirmar.addEventListener('click', function () {
+                btnSubmit.click();
+            });
+
+            /* ---------- click "Editar datos" → cerrar modal ---------- */
+            btnEditar.addEventListener('click', function () {
+                bootstrap.Modal.getInstance(modalEl).hide();
+            });
+        });
     </script>
 @endsection

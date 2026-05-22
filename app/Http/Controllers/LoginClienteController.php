@@ -497,9 +497,10 @@ class LoginClienteController extends Controller
             ]);
             $recaptchaData = $recaptchaVerifyResponse->json();
             if (!$recaptchaData['success'] || $recaptchaData['score'] < 0.5) {
-return redirect()->back()
-    ->withErrors(['captcha' => 'La validación del captcha falló. Inténtalo nuevamente.'])
-    ->withInput();            }
+                return redirect()->back()
+                    ->withErrors(['captcha' => 'La validación del captcha falló. Inténtalo nuevamente.'])
+                    ->withInput();
+            }
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['captcha' => 'Hubo un error al verificar el reCAPTCHA. Inténtalo más tarde.']);
         }
@@ -624,22 +625,30 @@ return redirect()->back()
 
             // Enviar emails
             $email = new ActivarCuenta($user, $camposEmail);
-            Mail::to('info@tytsa.com.ar')
+
+            $mailer = Mail::to('info@tytsa.com.ar')
                 ->bcc([
                     'dcamacho.tytsa@gmail.com',
                     'lmorales.tytsa@gmail.com',
                     'ariel@tytsa.com.ar',
-                ])
-                ->send($email);
+                ]);
+
+            // Agregar el email del cliente si existe
+            if (!empty($user->email)) {
+                $mailer->bcc($user->email);
+            }
+
+            $mailer->send($email);
 
             $active = "";
             $inicio = Inicio::first();
             return view('page.activarCuenta', compact('active', 'inicio'));
         } catch (\Exception $e) {
             dd($e);
-return redirect()->back()
-    ->withErrors(['error' => 'No se pudo crear el cliente. Intente nuevamente.'])
-    ->withInput();        }
+            return redirect()->back()
+                ->withErrors(['error' => 'No se pudo crear el cliente. Intente nuevamente.'])
+                ->withInput();
+        }
     }
 
 
