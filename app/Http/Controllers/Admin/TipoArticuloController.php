@@ -89,10 +89,11 @@ class TipoArticuloController extends Controller
                             $subCategoria = TipoArticulo::whereRaw('LOWER(name) = ?', [$familiaWeb])->first();
 
                             if (!$subCategoria) {
+                                // Solo asigna sub_categoria_id al crear, nunca al actualizar
                                 $subCategoria = new TipoArticulo();
+                                $subCategoria->sub_categoria_id = $categoria->id ?? null;
                             }
                             $subCategoria->name = strtoupper($value['familiaWeb']);
-                            $subCategoria->sub_categoria_id = $categoria->id ?? null;
                             $subCategoria->save();
                         }
                     }
@@ -124,13 +125,6 @@ class TipoArticuloController extends Controller
 
 
         $articulosVinculados = $item->productos;
-
-
-
-
-
-
-
 
 
         if ($item->id == 36 || $item->id == 37 || $item->id == 38) {
@@ -353,8 +347,6 @@ class TipoArticuloController extends Controller
                 // dd($productos['values']);
                 foreach ($productos['values'] as $value) {
 
-
-
                     $categoria = TipoArticulo::where('name', $value['unidadNegocio'])->where('principal', 'true')->first();
 
                     if (!$categoria) {
@@ -368,10 +360,10 @@ class TipoArticuloController extends Controller
                         $categoria->save();
                     }
 
-
                     $subCategoria = TipoArticulo::where('name', $value['familiaWeb'])->where('principal', 'false')->first();
 
                     if (!$subCategoria) {
+                        // Solo asigna sub_categoria_id al crear, nunca al actualizar
                         $subCategoria = new TipoArticulo();
                         $subCategoria->name = $value['familiaWeb'];
                         $subCategoria->principal = 'false';
@@ -382,13 +374,9 @@ class TipoArticuloController extends Controller
                         $subCategoria->name = $value['familiaWeb'];
                         $subCategoria->principal = 'false';
                         $subCategoria->code = $value['tipoProducto'];
-                        $subCategoria->sub_categoria_id = $categoria->id;
+                        // NO se pisa sub_categoria_id si ya existe
                         $subCategoria->save();
                     }
-
-
-
-
 
                     $articulo = Articulo::where('code', $value['codigoProducto'])->first();
 
