@@ -22,7 +22,7 @@ class ActivarCuenta extends Mailable
     public function build()
     {
         return $this
-            ->subject('Activa tu cuenta TyT')
+            ->subject('Registro cliente mayorista TyT')
             ->view('emails.ActivarCuenta');
     }
 }
