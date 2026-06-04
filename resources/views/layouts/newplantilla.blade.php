@@ -3,12 +3,23 @@
 
 <head>
 
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-53RHLS4Z');</script>
-<!-- End Google Tag Manager -->
+    <script>
+        (function(w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src =
+                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-53RHLS4Z');
+    </script>
+    <!-- End Google Tag Manager -->
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -66,25 +77,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-    
+
     <!-- Facebook Pixel Code -->
-<script>
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '{your-pixel-id-goes-here}');
-  fbq('track', 'PageView');
-</script>
-<noscript>
-  <img height="1" width="1" style="display:none" 
-       src="https://www.facebook.com/tr?id={your-pixel-id-goes-here}&ev=PageView&noscript=1"/>
-</noscript>
-<!-- End Facebook Pixel Code -->
+    <script>
+        ! function(f, b, e, v, n, t, s) {
+            if (f.fbq) return;
+            n = f.fbq = function() {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = !0;
+            n.version = '2.0';
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = !0;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '{your-pixel-id-goes-here}');
+        fbq('track', 'PageView');
+    </script>
+    <noscript>
+        <img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id={your-pixel-id-goes-here}&ev=PageView&noscript=1" />
+    </noscript>
+    <!-- End Facebook Pixel Code -->
 
 
     <script>
@@ -106,22 +127,31 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             });
         });
     </script>
-    
+
     <script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '33656860503959745');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=33656860503959745&ev=PageView&noscript=1"
-/></noscript>
+        ! function(f, b, e, v, n, t, s) {
+            if (f.fbq) return;
+            n = f.fbq = function() {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = !0;
+            n.version = '2.0';
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = !0;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '33656860503959745');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=33656860503959745&ev=PageView&noscript=1" /></noscript>
 
     <title>TyT</title>
     @yield('style')
@@ -321,24 +351,13 @@ src="https://www.facebook.com/tr?id=33656860503959745&ev=PageView&noscript=1"
 </head>
 
 <body>
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-53RHLS4Z"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-53RHLS4Z" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
 
     <div id="app">
 
-        @if (Auth::guard('cliente')->check())
-            @include('page.layouts.newheader')
-        @else
-            @if (@$headerexpand)
-                @if (@$headerinicio)
-                    @include('page.layouts.newheaderexpandinicio')
-                @else
-                    @include('page.layouts.newheaderexpand')
-                @endif
-            @else
-                @include('page.layouts.newheader')
-            @endif
-        @endif
+       @include('page.layouts.newheader')
+
 
 
         <main>
@@ -354,7 +373,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 @endisset
 
                                 <form method="POST" action="{{ route('login.clientes') }}" autocomplete="off">
-                                <!--<form method="POST"  autocomplete="off">-->
+                                    <!--<form method="POST"  autocomplete="off">-->
                                     @csrf
                                     <div class="mt-3 form-group row d-flex justify-content-center align-items-center">
                                         <div class="col-md-11 d-flex justify-content-between popL">
@@ -379,7 +398,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                     @endif
                                                 </b>
                                             </span>
-                                            <input 
+                                            <input
                                                 style="background:transparent;color:#000;border-color:#F15E40; border-radius: 35px"
                                                 id="username" type="text"
                                                 class="form-control @error('username') is-invalid @enderror"
@@ -398,7 +417,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                     @endif
                                                 </b>
                                             </span>
-                                            <input 
+                                            <input
                                                 style="background:transparent;color:#000;border-color:#F15E40; border-radius: 35px"
                                                 id="password" type="password"
                                                 class="form-control @error('password') is-invalid @enderror"
@@ -418,18 +437,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                     Login
                                                 @endif
                                             </button>
-                                            
-                                              <!--<span clas="text-center">-->
-                                                  
-                                              <!--  @if (session('locale') === 'es')-->
-                                              <!--      Acceso temporalmente deshabilitado.-->
-                                              <!--  @else-->
-                                              <!--      Access temporarily disabled.-->
-                                              <!--  @endif-->
-                                                  
-                                              <!--</span>-->
 
-                                            
+                                            <!--<span clas="text-center">-->
+
+                                            <!--  @if (session('locale') === 'es')
+-->
+                                            <!--      Acceso temporalmente deshabilitado.-->
+                                        <!--  @else-->
+                                            <!--      Access temporarily disabled.-->
+                                            <!--
+@endif-->
+
+                                            <!--</span>-->
+
+
                                             <a style="color: black !important" href="{{ route('page.registro') }}">
                                                 @if (session('locale') === 'es')
                                                     Quiero ser cliente
@@ -461,7 +482,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </main>
         @include('page.layouts.newfooter')
 
-        
+
     </div>
 
 
@@ -476,62 +497,62 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
         integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
     </script>
-<script src="{{ asset('js/scriptP.js?v=9') }}"></script>
+    <script src="{{ asset('js/scriptP.js?v=9') }}"></script>
 
-<script>
-    window.eventosStoreUrl = '{{ route("eventos.store") }}';
-    window.csrfToken = '{{ csrf_token() }}';
-    window.clienteId = {{ Auth::guard('cliente')->user()->id ?? 'null' }};
-  </script>
+    <script>
+        window.eventosStoreUrl = '{{ route('eventos.store') }}';
+        window.csrfToken = '{{ csrf_token() }}';
+        window.clienteId = {{ Auth::guard('cliente')->user()->id ?? 'null' }};
+    </script>
 
-<script>
-    (function(){
-      // Solo se ejecuta si el cliente está autenticado (clienteId no es null)
-      if(window.clienteId) {
-        // Obtenemos la fecha de hoy en formato YYYY-MM-DD
-        var today = new Date().toISOString().split("T")[0];
-        // Creamos una clave única para el día actual
-        var dailyKey = 'cliente_referrer_' + today;
-        
-        // Si no se ha registrado el referrer hoy, lo enviamos
-        if(!localStorage.getItem(dailyKey)) {
-          $.ajax({
-            url: window.eventosStoreUrl,
-            type: 'POST',
-            data: {
-              cliente_id: window.clienteId,
-              tipo_evento: 'cliente_referrer',
-              fecha: new Date().toISOString(),
-              referrer: document.referrer
-            },
-            headers: {
-              'X-CSRF-TOKEN': window.csrfToken
-            },
-            success: function(response) {
-              console.log('Evento cliente_referrer guardado en la BD', response);
-              // Marcamos que ya se registró el evento hoy
-              localStorage.setItem(dailyKey, 'true');
-            },
-            error: function(xhr, status, error) {
-              console.error('Error al guardar el evento cliente_referrer', error);
+    <script>
+        (function() {
+            // Solo se ejecuta si el cliente está autenticado (clienteId no es null)
+            if (window.clienteId) {
+                // Obtenemos la fecha de hoy en formato YYYY-MM-DD
+                var today = new Date().toISOString().split("T")[0];
+                // Creamos una clave única para el día actual
+                var dailyKey = 'cliente_referrer_' + today;
+
+                // Si no se ha registrado el referrer hoy, lo enviamos
+                if (!localStorage.getItem(dailyKey)) {
+                    $.ajax({
+                        url: window.eventosStoreUrl,
+                        type: 'POST',
+                        data: {
+                            cliente_id: window.clienteId,
+                            tipo_evento: 'cliente_referrer',
+                            fecha: new Date().toISOString(),
+                            referrer: document.referrer
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': window.csrfToken
+                        },
+                        success: function(response) {
+                            console.log('Evento cliente_referrer guardado en la BD', response);
+                            // Marcamos que ya se registró el evento hoy
+                            localStorage.setItem(dailyKey, 'true');
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error al guardar el evento cliente_referrer', error);
+                        }
+                    });
+                }
             }
-          });
-        }
-      }
-    })();
-  </script>
-  
-  
+        })();
+    </script>
+
+
     @stack('scripts')
 
     <script>
- window.onload = function() {
-    if (window.myCartModule && typeof window.myCartModule.checkCartAbandonment === 'function') {
-      window.myCartModule.checkCartAbandonment();
-    } else {
-      console.log('myCartModule no est��� definido');
-    }
-  };
+        window.onload = function() {
+            if (window.myCartModule && typeof window.myCartModule.checkCartAbandonment === 'function') {
+                window.myCartModule.checkCartAbandonment();
+            } else {
+                console.log('myCartModule no est��� definido');
+            }
+        };
 
 
         $('.navbar-toggler').click(function() {
@@ -541,11 +562,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 
 
-  
 
 
 
-        
+
+
 
 
 

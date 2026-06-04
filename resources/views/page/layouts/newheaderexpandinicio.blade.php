@@ -116,12 +116,17 @@
         filter: invert(100%);
     }
 
+    /* Base: todos ocultos por defecto */
+    .navOld {
+        display: none;
+    }
+
     .navNew {
-        display: none
+        display: none;
     }
 
     .navMobile {
-        display: none
+        display: none;
     }
 
     .bg-pc {
@@ -136,72 +141,76 @@
         display: none !important;
     }
 
-    @media (max-width: 308px) {
-        .inicoSlider {
-            height: 750px !important;
-        }
-        .contenedorIm {
-            height: 750px !important;
-        }
-        .navbar-brand {
-            margin-right: 0px !important;
-        }
+    /* Desktop: solo navOld (alineado con breakpoint lg de Bootstrap = 992px) */
+    @media (min-width: 993px) {
         .navOld {
-            display: none !important
+            display: flex !important;
         }
+
         .navNew {
-            display: none !important
-        }
-        .navMobile {
-            display: flex;
+            display: none !important;
         }
     }
 
-    @media (max-width: 1000px) {
+    /* Tablet y mobile: solo navNew */
+    @media (max-width: 991px) {
+        .navOld {
+            display: none !important;
+        }
+
+        .navNew {
+            display: flex !important;
+        }
+
         .ui-menu {
             width: 50% !important;
         }
+
         .contMobile {
             margin-top: 10px;
             margin-bottom: 30px;
         }
+
         .contMobile div {
-            padding-top: 5px !important
+            padding-top: 5px !important;
         }
+
         .nav-link {
             font-size: 16px !important;
             padding: 1rem 1rem !important;
         }
+
         #navbarNavAltMarkup div button {
             margin-bottom: 20px !important;
         }
+
         .fotterM {
             width: 100% !important;
             height: auto !important;
         }
+
         .iconosF {
-            width: 30px !important
+            width: 30px !important;
         }
+
         .botonesIg {
-            margin-top: 50px !important
+            margin-top: 50px !important;
         }
+
         .footerDiv {
             height: auto !important;
         }
-        .navOld {
-            display: none !important
-        }
-        .navNew {
-            display: flex;
-        }
+
         .box_container {
             width: 100% !important;
         }
+
         .inicoSlider {
             height: 640px !important;
             padding-bottom: 50px !important;
             width: 100% !important;
         }
+
         .contenedorIm {
             height: 640px !important;
         }
@@ -211,6 +220,7 @@
         .mobileContant {
             display: flex !important;
         }
+
         .pcContant {
             display: none !important;
         }
@@ -220,20 +230,52 @@
         .inicoSlider {
             height: 800px !important;
         }
+
         .contenedorIm {
             height: 800px !important;
         }
+
         .navbar-brand {
             margin-right: 0px !important;
         }
+
         .img-fluid {
             max-width: 70% !important;
         }
+
         .botonesIg div {
             display: flex !important;
         }
+
         .botonesIg div {
-            gap: 0px !important
+            gap: 0px !important;
+        }
+    }
+
+    /* Mobile muy chico: solo navMobile */
+    @media (max-width: 308px) {
+        .inicoSlider {
+            height: 750px !important;
+        }
+
+        .contenedorIm {
+            height: 750px !important;
+        }
+
+        .navbar-brand {
+            margin-right: 0px !important;
+        }
+
+        .navOld {
+            display: none !important;
+        }
+
+        .navNew {
+            display: none !important;
+        }
+
+        .navMobile {
+            display: flex !important;
         }
     }
 

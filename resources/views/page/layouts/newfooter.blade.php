@@ -128,7 +128,7 @@
 
 
                         <br>
-                     
+
                         <a href="{{ route('page.productosCategorias') }}"
                             style="color:#fff; text-decoration:none; font-size:16px;line-height: 35px;">
                             @if (session('locale') === 'es')
@@ -265,6 +265,18 @@
         @endif
         <!--<a target="_blank" href="https://nicolasfigueredo.vercel.app/" style="text-decoration: none;color:#fff;">By Nicolas Figueredo</a>-->
     </div>
+
+
+
+    @if (session('locale') === 'es')
+        <a class="footer-credit text-white" target="_blank" rel="noopener noreferrer" href="https://infonicsoluciones.com/">
+            Desarrollado por Infonic Soluciones
+        </a>
+    @else
+        <a class="footer-credit" target="_blank" rel="noopener noreferrer" href="https://infonicsoluciones.com/">
+            Built by Infonic Soluciones
+        </a>
+    @endif
 </div>
 @section('js')
     <script>
