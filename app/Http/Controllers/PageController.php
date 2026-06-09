@@ -271,12 +271,11 @@ class PageController extends Controller
 
         \Log::info('DEBUG productos()', [
     'id'              => $id,
-    'productosVisible'=> $productosVisible,
-    'categoria_id'    => $categoria->id,
     'categoria_name'  => $categoria->name,
     'principal'       => $categoria->principal,
     'tieneProductos'  => $tieneProductos,
     'productos_count' => $productos->count(),
+    'categoriasSub_count' => $categoriasSub ? count($categoriasSub) : 0,
     'productos_ids'   => $productos->pluck('id')->toArray(),
 ]);
         if (request()->ajax()) {
