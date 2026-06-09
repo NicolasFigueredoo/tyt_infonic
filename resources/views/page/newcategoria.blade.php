@@ -576,7 +576,7 @@ use App\Models\Articulo;
             width: 100% !important;
             margin-left: 0 !important;
             margin-right: 0 !important;
-            row-gap: 34px !important;
+            row-gap: 16px !important;
         }
 
         body .productosCpC.pcProductos > .categoriaContainer,
@@ -588,7 +588,7 @@ use App\Models\Articulo;
             width: 33.333333% !important;
             padding-left: 14px !important;
             padding-right: 14px !important;
-            margin-bottom: 34px !important;
+            margin-bottom: 16px !important;
             box-sizing: border-box !important;
         }
 
@@ -620,6 +620,11 @@ use App\Models\Articulo;
         /* FIX duplicados máxima especificidad */
         body .row.mobileProductos.productosCpC {
             display: none !important;
+        }
+
+        /* Sin border-radius en las imágenes de productos/categorías */
+        body .productosCpC .producto-portada {
+            border-radius: 0px !important;
         }
     }
 
