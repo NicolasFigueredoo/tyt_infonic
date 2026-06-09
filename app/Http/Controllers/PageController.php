@@ -130,7 +130,7 @@ class PageController extends Controller
         return view('page.newproductosCategorias', compact('inicio', 'active', 'categorias', 'titulo', 'route', 'metadatos', 'title', 'headerexpand'));
     }
 
-    public function productos($id, $productosVisible)
+ public function productos($id, $productosVisible)
     {
         $active = 'page.productos';
         $titulo = 'Categorias';
@@ -228,13 +228,20 @@ class PageController extends Controller
         $isParent = TipoArticulo::where('sub_categoria_id', $id)->get();
 
         if ($isParent->isEmpty()) {
-            // Es un nodo hoja: muestra directamente sus productos
+            // Nodo hoja: muestra directamente sus productos
             $tieneProductos = 1;
             $productos = $categoria->productos;
         } else {
-            // Tiene hijos: recorre los hijos y acumula sus productos
+            // Tiene hijos: acumula productos de los hijos
             $categoriasHijos = TipoArticulo::where('sub_categoria_id', $categoria->id)->get();
 
+            // Primero agregar productos propios de la categoría si los tiene
+            $productosPropios = $categoria->productos;
+            if (!$productosPropios->isEmpty()) {
+                $productos = $productos->merge($productosPropios);
+            }
+
+            // Luego agregar productos de los hijos
             foreach ($categoriasHijos as $categoriaHija) {
                 $productosHija = $categoriaHija->productos;
                 if (!$productosHija->isEmpty()) {
@@ -242,17 +249,27 @@ class PageController extends Controller
                 }
             }
 
-            if ($categoria->principal == 'true') {
-                // Categoría raíz: muestra subcategorías, no productos
+            if ($categoria->principal == 'true' && $productos->isEmpty()) {
+                // Categoría raíz sin productos: muestra subcategorías
                 $tieneProductos = 0;
+            } elseif ($productos->isNotEmpty()) {
+                // Tiene productos (propios o de hijos): los muestra
+                $tieneProductos = 1;
             } else {
-                // Categoría intermedia con hijos: si acumuló productos, los muestra
-                if ($productos->isNotEmpty()) {
-                    $tieneProductos = 1;
-                }
+                $tieneProductos = 0;
             }
         }
         // -------------------------------------------------------
+
+        \Log::info('DEBUG productos()', [
+            'id'              => $id,
+            'categoria_name'  => $categoria->name,
+            'principal'       => $categoria->principal,
+            'tieneProductos'  => $tieneProductos,
+            'productos_count' => $productos->count(),
+            'categoriasSub_count' => $categoriasSub ? count($categoriasSub) : 0,
+            'productos_ids'   => $productos->pluck('id')->toArray(),
+        ]);
 
         $metadatos = Metadato::where('seccion', 'catalogo')->first();
 
@@ -269,15 +286,6 @@ class PageController extends Controller
             $categoriasprin = $categoriasF;
         }
 
-        \Log::info('DEBUG productos()', [
-    'id'              => $id,
-    'categoria_name'  => $categoria->name,
-    'principal'       => $categoria->principal,
-    'tieneProductos'  => $tieneProductos,
-    'productos_count' => $productos->count(),
-    'categoriasSub_count' => $categoriasSub ? count($categoriasSub) : 0,
-    'productos_ids'   => $productos->pluck('id')->toArray(),
-]);
         if (request()->ajax()) {
             return view('partials.productosOrCategorias', compact('categoria', 'productos', 'categoriasSub', 'tieneProductos'))->render();
         }
