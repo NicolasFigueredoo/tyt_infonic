@@ -639,6 +639,11 @@ use App\Models\Articulo;
         }
     }
 
+    body .productosCpC .productoContainer,
+body .productosCpC .categoriaContainer {
+    height: auto !important;
+}
+
 </style>
 
     <div class="pcProductos">
