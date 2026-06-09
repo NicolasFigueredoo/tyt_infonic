@@ -96,29 +96,29 @@
                     <div class="modal-body d-flex">
                         <div class="row">
                             <div class="col-lg-6">
-                                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel"
+                                <div id="carousel-{{ $producto->id }}" class="carousel slide" data-bs-ride="carousel"
                                     onclick="window.location='{{ route('page.producto', ['articulo' => $producto->slug ?? $producto->id]) }}'"
                                     style="cursor: pointer">
 
                                     <div class="carousel-indicators">
                                         @if ($producto->imagen)
-                                            <button type="button" data-bs-target="#carouselExampleIndicators"
+                                            <button type="button" data-bs-target="#carousel-{{ $producto->id }}"
                                                 data-bs-slide-to="0" class="active" aria-current="true"
                                                 aria-label="Slide 1"></button>
                                         @endif
                                         @forelse ($producto->obtenerGaleria() as $index => $galeria)
-                                            <button type="button" data-bs-target="#carouselExampleIndicators"
+                                            <button type="button" data-bs-target="#carousel-{{ $producto->id }}"
                                                 data-bs-slide-to="{{ $loop->iteration }}"
                                                 aria-label="Slide {{ $loop->iteration }}"></button>
                                         @empty
                                         @endforelse
                                         @if ($producto->video)
-                                            <button type="button" data-bs-target="#carouselExampleIndicators"
+                                            <button type="button" data-bs-target="#carousel-{{ $producto->id }}"
                                                 data-bs-slide-to="{{ count($producto->obtenerGaleria()) + 1 }}"
                                                 aria-label="Slide Video 1"></button>
                                         @endif
                                         @if ($producto->videoTwo)
-                                            <button type="button" data-bs-target="#carouselExampleIndicators"
+                                            <button type="button" data-bs-target="#carousel-{{ $producto->id }}"
                                                 data-bs-slide-to="{{ count($producto->obtenerGaleria()) + 2 }}"
                                                 aria-label="Slide Video 2"></button>
                                         @endif
@@ -182,12 +182,12 @@
                                     </div>
 
                                     <button class="carousel-control-prev" type="button"
-                                        data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                                        data-bs-target="#carousel-{{ $producto->id }}" data-bs-slide="prev">
                                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                         <span class="visually-hidden">Previous</span>
                                     </button>
                                     <button class="carousel-control-next" type="button"
-                                        data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                                        data-bs-target="#carousel-{{ $producto->id }}" data-bs-slide="next">
                                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                         <span class="visually-hidden">Next</span>
                                     </button>
