@@ -257,12 +257,14 @@ use App\Models\Articulo;
         display: none;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Desktop
-    |--------------------------------------------------------------------------
-    | Ojo: pcProductos puede estar en un .row, por eso no usamos display:block.
-    */
+    /* Texto categorías principales responsive */
+    .textoCatPrin {
+        color: #fff;
+        font-weight: 600;
+        margin-bottom: 0px;
+        font-size: clamp(18px, 3vw, 46px);
+    }
+
     @media (min-width: 992px) {
         .pcProductos {
             display: flex !important;
@@ -308,6 +310,11 @@ use App\Models\Articulo;
             margin-left: 0 !important;
             margin-right: 0 !important;
         }
+
+        /* FIX duplicados: fuerza ocultar mobile con máxima especificidad */
+        .row.mobileProductos.productosCpC {
+            display: none !important;
+        }
     }
 
     @media (max-width: 1350px) {
@@ -322,11 +329,6 @@ use App\Models\Articulo;
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Modal
-    |--------------------------------------------------------------------------
-    */
     .custom-modal {
         position: fixed;
         top: 0;
@@ -404,12 +406,6 @@ use App\Models\Articulo;
         opacity: 1;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tablet / Mobile
-    |--------------------------------------------------------------------------
-    | Bootstrap lg arranca en 992px, por eso el corte correcto es 991.98px.
-    */
     @media (max-width: 991.98px) {
         .modal.show {
             display: flex !important;
@@ -562,102 +558,85 @@ use App\Models\Articulo;
     .slick-arrow {
         display: none;
     }
-    
+
     /* ================================
-   FIX DESKTOP GRID SUBPRODUCTOS
-================================ */
+       FIX DESKTOP GRID
+    ================================ */
+    @media (min-width: 992px) {
+        body .pcProductos:not(.productosCpC):not(.row) {
+            display: block !important;
+        }
 
-@media (min-width: 992px) {
-    /*
-    El primer .pcProductos es wrapper general.
-    No debe comportarse como flex.
-    */
-    body .pcProductos:not(.productosCpC):not(.row) {
-        display: block !important;
+        body .productosCpC.pcProductos,
+        body .productosCpC.row {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            align-items: flex-start !important;
+            justify-content: flex-start !important;
+            width: 100% !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            row-gap: 34px !important;
+        }
+
+        body .productosCpC.pcProductos > .categoriaContainer,
+        body .productosCpC.pcProductos > .productoContainer,
+        body .productosCpC.row > .categoriaContainer,
+        body .productosCpC.row > .productoContainer {
+            flex: 0 0 33.333333% !important;
+            max-width: 33.333333% !important;
+            width: 33.333333% !important;
+            padding-left: 14px !important;
+            padding-right: 14px !important;
+            margin-bottom: 34px !important;
+            box-sizing: border-box !important;
+        }
+
+        body .productosCpC .producto-portada,
+        body .productosCpC .categoriaContainer .producto-portada,
+        body .productosCpC .productoContainer .producto-portada {
+            width: 100% !important;
+            height: 240px !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+        }
+
+        body .productosCpC img {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+
+        body .productosCpC b,
+        body .productosCpC .product-name {
+            display: block !important;
+            width: 100% !important;
+            text-align: center !important;
+            font-size: 16px !important;
+            line-height: 20px !important;
+            margin-top: 8px !important;
+            word-break: normal !important;
+        }
+
+        /* FIX duplicados máxima especificidad */
+        body .row.mobileProductos.productosCpC {
+            display: none !important;
+        }
     }
 
-    /*
-    La grilla real de productos/categorías sí debe ser flex.
-    */
-    body .productosCpC.pcProductos,
-    body .productosCpC.row {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        align-items: flex-start !important;
-        justify-content: flex-start !important;
-        width: 100% !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        row-gap: 34px !important;
+    @media (min-width: 992px) and (max-width: 1199.98px) {
+        body .productosCpC.pcProductos > .categoriaContainer,
+        body .productosCpC.pcProductos > .productoContainer,
+        body .productosCpC.row > .categoriaContainer,
+        body .productosCpC.row > .productoContainer {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+            width: 50% !important;
+        }
     }
 
-    /*
-    Fuerza 3 columnas reales dentro del área derecha.
-    Aplica tanto a categorías como a productos.
-    */
-    body .productosCpC.pcProductos > .categoriaContainer,
-    body .productosCpC.pcProductos > .productoContainer,
-    body .productosCpC.row > .categoriaContainer,
-    body .productosCpC.row > .productoContainer {
-        flex: 0 0 33.333333% !important;
-        max-width: 33.333333% !important;
-        width: 33.333333% !important;
-        padding-left: 14px !important;
-        padding-right: 14px !important;
-        margin-bottom: 34px !important;
-        box-sizing: border-box !important;
-    }
-
-    /*
-    Normaliza imágenes para que no empujen la columna.
-    */
-    body .productosCpC .producto-portada,
-    body .productosCpC .categoriaContainer .producto-portada,
-    body .productosCpC .productoContainer .producto-portada {
-        width: 100% !important;
-        height: 240px !important;
-        background-size: cover !important;
-        background-position: center !important;
-        background-repeat: no-repeat !important;
-    }
-
-    body .productosCpC img {
-        max-width: 100% !important;
-        height: auto !important;
-    }
-
-    body .productosCpC b,
-    body .productosCpC .product-name {
-        display: block !important;
-        width: 100% !important;
-        text-align: center !important;
-        font-size: 16px !important;
-        line-height: 20px !important;
-        margin-top: 8px !important;
-        word-break: normal !important;
-    }
-}
-
-/*
-En pantallas desktop más chicas, 2 columnas está bien.
-Ej: notebooks angostas.
-*/
-@media (min-width: 992px) and (max-width: 1199.98px) {
-    body .productosCpC.pcProductos > .categoriaContainer,
-    body .productosCpC.pcProductos > .productoContainer,
-    body .productosCpC.row > .categoriaContainer,
-    body .productosCpC.row > .productoContainer {
-        flex: 0 0 50% !important;
-        max-width: 50% !important;
-        width: 50% !important;
-    }
-}
 </style>
 
-
     <div class="pcProductos">
-
-        <!-- Categorias -->
         <div class="d-flex justify-content-center">
             <div class="d-flex flex-row justify-content-start align-items-center align-items-md-start flex-wrap box_container py-5"
                 style="gap: 10px">
@@ -666,40 +645,27 @@ Ej: notebooks angostas.
                         class="col-12 col-md-4 col-md-4-adjusted d-flex flex-column justify-content-end align-items-center align-items-md-start g-2 p-4"
                         style="position: relative; text-transform: uppercase;
                         @if ($categoriaPrincipalVer->id !== $item->id) background: linear-gradient(0deg, rgba(128, 128, 128, 0.8), rgba(128, 128, 128, 0.8)), url({{ $item->imagen ? asset(Storage::url($item->imagen)) : asset('img/logo2.jpg') }}) no-repeat center center; background-size: cover;
-                        @else
-                        background: linear-gradient(0deg, #161414 1.96%, rgba(22, 20, 20, 0) 95.28%), url({{ $item->imagen ? asset(Storage::url($item->imagen)) : asset('img/logo2.jpg') }}) no-repeat center center; background-size: cover; @endif
-                        height: 180px; border-radius: 10px;"
+                        @else background: linear-gradient(0deg, #161414 1.96%, rgba(22, 20, 20, 0) 95.28%), url({{ $item->imagen ? asset(Storage::url($item->imagen)) : asset('img/logo2.jpg') }}) no-repeat center center; background-size: cover;
+                        @endif height: 180px; border-radius: 10px;"
                         data-aos="zoom-in">
                         <div>
                             <spam style="color:#fff; font-weight: 600; font-size:16px; margin-bottom:0px"></spam>
                         </div>
-
                         <div style="height: 24px; width:50%">
-                            <div
-                                style="width:100%; height: 100%; background: url({{ $item->imagenMarca ? asset(Storage::url($item->imagenMarca)) : asset('img/logo2.jpg') }}) no-repeat center center; background-size: contain;">
-
-                            </div>
-
+                            <div style="width:100%; height: 100%; background: url({{ $item->imagenMarca ? asset(Storage::url($item->imagenMarca)) : asset('img/logo2.jpg') }}) no-repeat center center; background-size: contain;"></div>
                         </div>
                         <div>
-                            <p style="color:#fff; font-weight: 600; font-size:46px; margin-bottom:0px">
-                                @if (session('locale') === 'es')
-                                    {{ $item->name }}
-                                @else
-                                    {{ $item->nameEnglish }}
-                                @endif
+                            <p class="textoCatPrin">
+                                @if (session('locale') === 'es') {{ $item->name }}
+                                @else {{ $item->nameEnglish }} @endif
                             </p>
                         </div>
-                        <div styl>
+                        <div>
                             <a style="color:#fff; text-decoration:none"
                                 href="{{ route('page.productos', ['id' => $item->id, 'productosVisible' => 0]) }}">
-
-                                @if (session('locale') === 'es')
-                                    Ver Categoría
-                                @else
-                                    View Category
-                                @endif <img
-                                    src="{{ asset(Storage::url('tipo-articulo/arrow_forward.png')) }}">
+                                @if (session('locale') === 'es') Ver Categoría
+                                @else View Category @endif
+                                <img src="{{ asset(Storage::url('tipo-articulo/arrow_forward.png')) }}">
                             </a>
                         </div>
                     </div>
@@ -709,71 +675,46 @@ Ej: notebooks angostas.
                     </div>
                 @endforelse
             </div>
-
         </div>
-        <!-- Fin Categorias -->
 
         <div class="d-flex justify-content-center">
-            <div class="d-flex flex-row justify-content-start align-items-center align-items-md-start  box_container">
+            <div class="d-flex flex-row justify-content-start align-items-center align-items-md-start box_container">
                 <div class="col-lg-12">
-
-                    <a style="text-decoration: none !important; color: #8A8A8A" href="{{ route('page.inicio') }}">Inicio
-                    </a>
+                    <a style="text-decoration: none !important; color: #8A8A8A" href="{{ route('page.inicio') }}">Inicio</a>
                     /
-                    <a style="text-decoration: none;color:#8A8A8A;"
-                        href="{{ route('page.productosCategorias') }}">Productos</a>
+                    <a style="text-decoration: none;color:#8A8A8A;" href="{{ route('page.productosCategorias') }}">Productos</a>
                     @if ($categoria)
                         /
-
-                        @if (session('locale') === 'es')
-                            {{ $categoria->name }}
-                        @else
-                            {{ $categoria->nameEnglish }}
-                        @endif
+                        @if (session('locale') === 'es') {{ $categoria->name }}
+                        @else {{ $categoria->nameEnglish }} @endif
                     @endif
                 </div>
-
             </div>
         </div>
     </div>
 
     <div class="mobileProductos">
         <div class="container" style="margin-top: 3rem">
-
             <div class="row contenedorCats" style="width: 100%; height: 400px;">
-
                 @forelse ($categoriasprin as $item)
                     <div style="height: 100px; width:50%" class="col-lg-4 d-flex flex-column">
-
                         <div id="boxProducto"
                             class="col-12 col-md-4 col-md-4-adjusted d-flex flex-column justify-content-end align-items-start align-items-md-start g-2 p-4"
-                            style="position: relative; text-transform: uppercase;
-    border-radius: 0px; 
-    height: 180px; border-radius: 10px; width:100%;
-    @if ($categoriaPrincipalVer->id !== $item->id) background: linear-gradient(0deg, rgba(128, 128, 128, 0.8), rgba(128, 128, 128, 0.8)), url({{ $item->imagen ? asset(Storage::url($item->imagen)) : asset('img/logo2.jpg') }}) no-repeat center center; background-size: cover;
-                        @else
-                        background: linear-gradient(0deg, #161414 1.96%, rgba(22, 20, 20, 0) 95.28%), url({{ $item->imagen ? asset(Storage::url($item->imagen)) : asset('img/logo2.jpg') }}) no-repeat center center; background-size: cover; @endif                            data-aos="zoom-in">
-
+                            style="position: relative; text-transform: uppercase; border-radius: 10px; height: 180px; width:100%;
+                            @if ($categoriaPrincipalVer->id !== $item->id) background: linear-gradient(0deg, rgba(128, 128, 128, 0.8), rgba(128, 128, 128, 0.8)), url({{ $item->imagen ? asset(Storage::url($item->imagen)) : asset('img/logo2.jpg') }}) no-repeat center center; background-size: cover;
+                            @else background: linear-gradient(0deg, #161414 1.96%, rgba(22, 20, 20, 0) 95.28%), url({{ $item->imagen ? asset(Storage::url($item->imagen)) : asset('img/logo2.jpg') }}) no-repeat center center; background-size: cover;
+                            @endif" data-aos="zoom-in">
                             <div>
                                 <spam style="color:#fff; font-weight: 600; font-size:16px; margin-bottom:0px"></spam>
                             </div>
-
                             <div style="height: 24px; width:100%">
-                                <div
-                                    style="width:100%; height: 100%; background: url({{ $item->imagenMarca ? asset(Storage::url($item->imagenMarca)) : asset('img/logo2.jpg') }}) no-repeat center center; background-size: contain;">
-
-                                </div>
-
+                                <div style="width:100%; height: 100%; background: url({{ $item->imagenMarca ? asset(Storage::url($item->imagenMarca)) : asset('img/logo2.jpg') }}) no-repeat center center; background-size: contain;"></div>
                             </div>
                             <div>
-                                <p class="tituloClass"
-                                    style="color:#fff; font-weight: 600; font-size:26px; margin-bottom:0px">
-
-                                    @if (session('locale') === 'es')
-                                        {{ $categoria->name }}
-                                    @else
-                                        {{ $categoria->nameEnglish }}
-                                    @endif
+                                <p class="tituloClass" style="color:#fff; font-weight: 600; font-size:26px; margin-bottom:0px">
+                                    @if (session('locale') === 'es') {{ $categoria->name }}
+                                    @else {{ $categoria->nameEnglish }} @endif
+                                </p>
                             </div>
                             <div>
                                 <a class="tituloClassCat" style="color:#fff; text-decoration:none"
@@ -784,154 +725,87 @@ Ej: notebooks angostas.
                     </div>
                 @empty
                 @endforelse
-
             </div>
         </div>
     </div>
-    <div class="mobileProductos">
 
+    <div class="mobileProductos">
         <div class="container col-12 py-2" style="font-size:16px;color:#8A8A8A;">
             <a style="text-decoration: none !important; color: #8A8A8A" href="{{ route('page.inicio') }}"> Inicio </a>
             /
             <a style="text-decoration: none;color:#8A8A8A;" href="{{ route('page.productosCategorias') }}">Productos</a>
             @if ($categoria)
                 /
-
-                @if (session('locale') === 'es')
-                    {{ $categoria->name }}
-                @else
-                    {{ $categoria->nameEnglish }}
-                @endif
+                @if (session('locale') === 'es') {{ $categoria->name }}
+                @else {{ $categoria->nameEnglish }} @endif
             @endif
         </div>
     </div>
 
-
-
-
     <div class="d-flex justify-content-center mt-5" style="margin-bottom: 200px">
         <div class="align-items-md-start box_container container contenedorSubcat">
-            <div class="col-12 col-lg-3">
 
+            <div class="col-12 col-lg-3">
                 <div class="sidebar py-3">
                     <div class="accordion" id="accordionExample">
                         <div class="casillaF">
                             <p class="filtrarPor">
-
-                                @if (session('locale') === 'es')
-                                    Filtrar por
-                                @else
-                                    Filter by
-                                @endif
-
+                                @if (session('locale') === 'es') Filtrar por
+                                @else Filter by @endif
                             </p>
-
                         </div>
                         @forelse ($categorias as $item)
-                            <?php
-                            $encontro = tipoArticulo::where('sub_categoria_id', $item->id)->first();
-                            
-                            ?>
-
+                            <?php $encontro = tipoArticulo::where('sub_categoria_id', $item->id)->first(); ?>
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="heading{{ $item->id }}">
-                                    <button class="accordion-button " type="button" data-bs-toggle="collapse"
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapse{{ $item->id }}" aria-expanded="true"
                                         aria-controls="collapse{{ $item->id }}"
                                         onclick="handleButtonClick({{ $item->id }}, {{ $encontro !== null ? 'true' : 'false' }}, '{{ route('page.productos', ['id' => $item->id, 'productosVisible' => 1]) }}')">
-                                        @if (session('locale') === 'es')
-                                            {{ $item->name }}
-                                        @else
-                                            {{ $item->nameEnglish }}
-                                        @endif
-
+                                        @if (session('locale') === 'es') {{ $item->name }}
+                                        @else {{ $item->nameEnglish }} @endif
                                     </button>
                                 </h2>
-
                                 @if ($encontro !== null)
                                     <div id="collapse{{ $item->id }}" class="accordion-collapse collapse"
                                         aria-labelledby="heading{{ $item->id }}" data-bs-parent="#accordionExample">
                                         <div id="subcategorias-{{ $item->id }}"
                                             class="accordion-body d-flex flex-column align-items-start">
-                                            <!-- Aquí se cargarán las subcategorías -->
                                         </div>
                                     </div>
                                 @endif
-
                             </div>
                         @empty
                             <p>No hay categorías disponibles.</p>
                         @endforelse
-
-
                     </div>
                 </div>
-
             </div>
 
             <div class="col-12 col-lg-9">
 
+                {{-- DESKTOP --}}
                 <div class="row pcProductos productosCpC">
-
-
-
-
                     @include('partials.productosOrCategorias', [
                         'productos' => $productos,
                         'categoriasSub' => $categoriasSub,
                         'tieneProductos' => $tieneProductos,
                     ])
-
-
                 </div>
+
+                {{-- MOBILE: sin @forelse hardcodeado, solo el @include --}}
                 <div class="row mobileProductos productosCpC">
-                    @if ($categoriasSub)
-                        @forelse ($categoriasSub as $producto)
-                            <div class="col-6 d-flex flex-column categoriaContainer"
-                                onclick="window.location='{{ route('page.productos', ['id' => $producto->id, 'productosVisible' => 1]) }}'">
-
-                                @isset($producto->imagen)
-                                    <div class='producto-portada'
-                                        style='background-image: url("{{ asset(Storage::url($producto->imagen)) }}"); background-size: contain;  background-position: center; background-repeat:no-repeat;'>
-
-                                    </div>
-                                @else
-                                    <div class='producto-portada'
-                                        style='background-image: url("{{ asset('images/logo.png') }}");  background-position: center; background-repeat:no-repeat;'>
-
-                                    </div>
-                                @endisset
-
-                                <b style="justify-content: center;align-items: center;display: flex;">
-                                    {{ $producto->name }}</b>
-                            </div>
-                        @empty
-                        @endforelse
-                    @endif
-
                     @include('partials.productosOrCategorias', [
                         'productos' => $productos,
                         'categoriasSub' => $categoriasSub,
                         'tieneProductos' => $tieneProductos,
                     ])
-
-
-
                 </div>
 
             </div>
 
         </div>
-
-
-
     </div>
-
-
-
-
-
-
 
 @endsection
 
@@ -943,84 +817,57 @@ Ej: notebooks angostas.
 
         let fetching = false;
 
-
         function ajaxCategorias(itemId, routeUrl, tieneProductos) {
-
-
             $('.accordion-button').removeClass('boldSubcategoria');
-
-            // Agrega la clase solo al botón específico
             $(`#heading${itemId} .accordion-button`).addClass('boldSubcategoria');
 
             $.ajax({
                 url: routeUrl,
                 type: 'GET',
-                data: {
-                    id: itemId,
-                    productosVisible: tieneProductos
-                },
+                data: { id: itemId, productosVisible: tieneProductos },
                 success: function(response) {
-                    $('.productosCpC').html(response);
-
+                    if ($(window).width() >= 992) {
+                        $('.pcProductos.productosCpC').html(response);
+                    } else {
+                        $('.mobileProductos.productosCpC').html(response);
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.error('Error en la solicitud AJAX:', error);
                 }
             });
-
         }
 
-
         function handleButtonClick(itemId, encontro, routeUrl, tieneProductos) {
-
             $('.accordion-button').removeClass('boldSubcategoria');
-
             $(`#heading${itemId} .accordion-button`).addClass('boldSubcategoria');
 
             if (encontro) {
                 fetchSubcategorias(itemId);
             }
 
-            ajaxCategorias(itemId, routeUrl, tieneProductos)
-
-
+            ajaxCategorias(itemId, routeUrl, tieneProductos);
         }
-
 
         function tieneProductos(categoriaId) {
             return new Promise(function(resolve, reject) {
                 $.ajax({
                     url: tieneProductosUrl,
                     type: 'POST',
-                    data: {
-                        categoriaId: categoriaId,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(data) {
-                        if (data) {
-                            resolve(1); // Resuelve la promesa con 1 si tiene productos
-                        } else {
-                            resolve(0); // Resuelve la promesa con 0 si no tiene productos
-                        }
-                    },
-                    error: function(error) {
-                        reject(error); // Manejo de errores si falla la solicitud AJAX
-                    }
+                    data: { categoriaId: categoriaId, _token: '{{ csrf_token() }}' },
+                    success: function(data) { resolve(data ? 1 : 0); },
+                    error: function(error) { reject(error); }
                 });
             });
         }
 
-
         function fetchSubcategorias(categoriaId, categoriaSelect) {
-
             if (fetching) return;
 
             const container = $('#subcategorias-' + categoriaId);
 
-
             if (container.length > 0) {
                 $('.accordion-item .accordion-button').removeClass('active-subcategory');
-
                 fetching = true;
 
                 $.ajax({
@@ -1029,19 +876,16 @@ Ej: notebooks angostas.
                     data: {
                         categoriaId: categoriaId,
                         categoriaSelect: categoriaSelect,
-                        _token: '{{ csrf_token() }}' // Incluye el token CSRF
+                        _token: '{{ csrf_token() }}'
                     },
                     success: function(data) {
                         container.html(data);
                         container.slideDown();
-
                         $('#heading' + categoriaId + ' .accordion-button').addClass('active-subcategory');
-
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
-                        console.error('Error al cargar las subcategor���as:', textStatus, errorThrown);
-                        console.error('Respuesta del servidor:', jqXHR.responseText);
-                        alert('Error al cargar las subcategor���as.');
+                        console.error('Error al cargar las subcategorías:', textStatus, errorThrown);
+                        alert('Error al cargar las subcategorías.');
                     },
                     complete: function() {
                         fetching = false;
@@ -1050,24 +894,14 @@ Ej: notebooks angostas.
             } else {
                 container.slideToggle();
             }
-
-
-
         }
     </script>
 @endsection
 
 @if ($categoria->principal == 'false')
-    <!-- Asegúrate de que esta variable contenga el ID de la categoría seleccionada -->
     @push('scripts')
         <script>
             $(document).ready(function() {
-
-
-
-
-
-
                 const categoriaId = {{ $categoria->id }};
                 const categoriaPadre = {{ $categoria->sub_categoria_id }};
 
@@ -1076,40 +910,23 @@ Ej: notebooks angostas.
                         const container = $('#subcategorias-' + categoriaPadre);
 
                         if (container.length > 0) {
-                            // Abre el acordeón correspondiente
                             const acordeonCollapse = $('#collapse' + categoriaPadre);
-                            const bsCollapse = new bootstrap.Collapse(acordeonCollapse[0], {
-                                toggle: true
-                            });
-
-                            bsCollapse.show(); // Muestra el acordeón
-
-
-
-                            // Realiza una llamada AJAX para cargar las subcategorías
+                            const bsCollapse = new bootstrap.Collapse(acordeonCollapse[0], { toggle: true });
+                            bsCollapse.show();
                             fetchSubcategorias(categoriaPadre, categoriaId);
-
-                            // Marca la categoría seleccionada en negrita
                             $('#heading' + categoriaId + ' .accordion-button').css('font-weight', 'bold');
                         } else {
-                            const container = $('#subcategorias-' + categoriaId);
-                            const acordeonCollapse = $('#collapse' + categoriaId);
-                            const bsCollapse = new bootstrap.Collapse(acordeonCollapse[0], {
-                                toggle: true
-                            });
-
-                            bsCollapse.show();
+                            const container2 = $('#subcategorias-' + categoriaId);
+                            const acordeonCollapse2 = $('#collapse' + categoriaId);
+                            const bsCollapse2 = new bootstrap.Collapse(acordeonCollapse2[0], { toggle: true });
+                            bsCollapse2.show();
                             fetchSubcategorias(categoriaId, categoriaPadre);
                             $('#heading' + categoriaPadre + ' .accordion-button').css('font-weight', 'bold');
-
                         }
                     }
                 }).catch(function(error) {
-                    console.error('Error:', error); // Manejo de errores si la petición falla
+                    console.error('Error:', error);
                 });
-
-
-
             });
         </script>
     @endpush

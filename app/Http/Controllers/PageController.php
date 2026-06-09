@@ -137,8 +137,6 @@ class PageController extends Controller
         $route = 'page.producto';
         $inicio = Inicio::first();
 
-
-        // Ajustar la consulta para que los art��culos con 'orden' nulo o vac��o aparezcan al final
         $articulos = Articulo::where('oculto', 'false')->whereNotNull('sub_categoria')
             ->orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
             ->get();
@@ -224,61 +222,64 @@ class PageController extends Controller
             $categoriasSub = $categorias;
         }
 
+        // -------------------------------------------------------
+        // FIX: lógica de productos sin duplicados
+        // -------------------------------------------------------
         $isParent = TipoArticulo::where('sub_categoria_id', $id)->get();
 
         if ($isParent->isEmpty()) {
+            // Es un nodo hoja: muestra directamente sus productos
             $tieneProductos = 1;
             $productos = $categoria->productos;
-        }
+        } else {
+            // Tiene hijos: recorre los hijos y acumula sus productos
+            $categoriasHijos = TipoArticulo::where('sub_categoria_id', $categoria->id)->get();
 
-        $productosCat = $categoria->productos;
-
-        $categoriasHijos = TipoArticulo::where('sub_categoria_id', $categoria->id)->get();
-
-        if ($productosCat) {
-            $tieneProductos = 1;
-            $productos = $productosCat;
-        }
-
-        if (!$categoriasHijos->isEmpty()) {
             foreach ($categoriasHijos as $categoriaHija) {
-
                 $productosHija = $categoriaHija->productos;
-
                 if (!$productosHija->isEmpty()) {
                     $productos = $productos->merge($productosHija);
                 }
             }
 
             if ($categoria->principal == 'true') {
+                // Categoría raíz: muestra subcategorías, no productos
                 $tieneProductos = 0;
+            } else {
+                // Categoría intermedia con hijos: si acumuló productos, los muestra
+                if ($productos->isNotEmpty()) {
+                    $tieneProductos = 1;
+                }
             }
         }
+        // -------------------------------------------------------
 
         $metadatos = Metadato::where('seccion', 'catalogo')->first();
-
 
         $categoriasF = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
             ->where('oculto', 'false')
             ->where('principal', 'true')
             ->get();
 
-
         if (Auth::guard('cliente')->check()) {
             $cliente = Auth::guard('cliente')->user();
             $asignadas = $cliente->categoriasPermitidas()->where('principal', 'true')->get();
-
-            // Si el cliente tiene alguna asignada, se usan esas; si no, se muestran las predeterminadas.
             $categoriasprin = $asignadas->isNotEmpty() ? $asignadas : $categoriasF;
         } else {
-            // Si no está logueado, se muestran las categorías predeterminadas.
             $categoriasprin = $categoriasF;
         }
 
-
-
+        \Log::info('DEBUG productos()', [
+    'id'              => $id,
+    'productosVisible'=> $productosVisible,
+    'categoria_id'    => $categoria->id,
+    'categoria_name'  => $categoria->name,
+    'principal'       => $categoria->principal,
+    'tieneProductos'  => $tieneProductos,
+    'productos_count' => $productos->count(),
+    'productos_ids'   => $productos->pluck('id')->toArray(),
+]);
         if (request()->ajax()) {
-
             return view('partials.productosOrCategorias', compact('categoria', 'productos', 'categoriasSub', 'tieneProductos'))->render();
         }
 
@@ -342,37 +343,37 @@ class PageController extends Controller
     }
 
 
-  public function productosSearch(Request $request)
-{
-    $active = 'page.productos';
-    $titulo = 'Categorias';
-    $route = 'page.producto';
-    $inicio = Inicio::first();
-    
-    // Realizar la búsqueda de productos con validación mejorada
-    $productos = Articulo::where(function($query) use ($request) {
+    public function productosSearch(Request $request)
+    {
+        $active = 'page.productos';
+        $titulo = 'Categorias';
+        $route = 'page.producto';
+        $inicio = Inicio::first();
+
+        // Realizar la búsqueda de productos con validación mejorada
+        $productos = Articulo::where(function ($query) use ($request) {
             $query->where('name', 'LIKE', '%' . $request->search . '%')
-                  ->orWhere('code', 'LIKE', '%' . $request->search . '%')
-                  ->orWhere('codigoAnterior', 'LIKE', '%' . $request->search . '%')
-                  ->orWhere('description', 'LIKE', '%' . $request->search . '%');
+                ->orWhere('code', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('codigoAnterior', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('description', 'LIKE', '%' . $request->search . '%');
         })
-        ->where('oculto', 'false')
-        ->whereNotNull('slug') // Asegurar que tenga slug
-        ->get();
-    
-    $categoria = '';
-    $categorias = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-        ->where('oculto', 'false')
-        ->get();
-    $metadatos = Metadato::where('seccion', 'catalogo')->first();
-    $categoriasprin = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-        ->where('oculto', 'false')
-        ->where('principal', 'true')
-        ->get();
-    $search = $request->search;
-    
-    return view('page.NewSearchProductos', compact('inicio', 'active', 'categorias', 'titulo', 'route', 'metadatos', 'productos', 'categoriasprin', 'search', 'categoria'));
-}
+            ->where('oculto', 'false')
+            ->whereNotNull('slug') // Asegurar que tenga slug
+            ->get();
+
+        $categoria = '';
+        $categorias = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
+            ->where('oculto', 'false')
+            ->get();
+        $metadatos = Metadato::where('seccion', 'catalogo')->first();
+        $categoriasprin = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
+            ->where('oculto', 'false')
+            ->where('principal', 'true')
+            ->get();
+        $search = $request->search;
+
+        return view('page.NewSearchProductos', compact('inicio', 'active', 'categorias', 'titulo', 'route', 'metadatos', 'productos', 'categoriasprin', 'search', 'categoria'));
+    }
 
     public function productoAPI($code)
     {
