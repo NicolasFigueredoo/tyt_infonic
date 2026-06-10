@@ -130,168 +130,115 @@ class PageController extends Controller
         return view('page.newproductosCategorias', compact('inicio', 'active', 'categorias', 'titulo', 'route', 'metadatos', 'title', 'headerexpand'));
     }
 
- public function productos($id, $productosVisible)
+    public function productos($id, $productosVisible)
     {
         $active = 'page.productos';
         $titulo = 'Categorias';
         $route = 'page.producto';
         $inicio = Inicio::first();
-
-        $articulos = Articulo::where('oculto', 'false')->whereNotNull('sub_categoria')
-            ->orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-            ->get();
-
-        $categoriasSub = '';
-        $tieneProductos = 0;
-        $productos = collect();
-        $categoria = TipoArticulo::find($id);
-        $categoriaSelect = TipoArticulo::find($categoria->id);
-
-        if ($categoria->principal == 'false') {
-            if ($productosVisible == 0) {
-                $categorias = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-                    ->where('oculto', 'false')
-                    ->where('principal', 'false')
-                    ->where('code', $categoria->code)
-                    ->get();
-
-                $categoriaParent = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-                    ->where('oculto', 'false')
-                    ->where('id', $categorias[0]->sub_categoria_id)
-                    ->get();
-
-                $categoriaPrincipal = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-                    ->where('oculto', 'false')
-                    ->where('id', $categoriaParent[0]->sub_categoria_id)
-                    ->first();
-
-                $categoriaPrincipalVer = $categoriaPrincipal;
-                $categorias = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-                    ->where('oculto', 'false')
-                    ->where('principal', 'false')
-                    ->where('sub_categoria_id', $categoriaPrincipal->id)
-                    ->get();
-
-                $categoriasSub = $categorias;
-            } else {
-                $categoriaPrincipal = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-                    ->where('id', $categoria->sub_categoria_id)
-                    ->first();
-
-                if ($categoriaPrincipal->principal == 'false') {
-                    $categorias = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-                        ->where('oculto', 'false')
-                        ->where('sub_categoria_id', $categoriaPrincipal->sub_categoria_id)
-                        ->get();
-                } else {
-                    $categorias = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-                        ->where('oculto', 'false')
-                        ->where('sub_categoria_id', $categoriaPrincipal->id)
-                        ->get();
-                }
-
-                if ($categoriaPrincipal->principal == 'true') {
-                    $categoriaPrincipalVer = $categoriaPrincipal;
-                } else {
-                    $categoriaPrincipal = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-                        ->where('id', $categoriaPrincipal->sub_categoria_id)
-                        ->first();
-
-                    if ($categoriaPrincipal->principal == 'true') {
-                        $categoriaPrincipalVer = $categoriaPrincipal;
-                    } else {
-                        $categoriaPrincipal = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-                            ->where('id', $categoriaPrincipal->sub_categoria_id)
-                            ->first();
-
-                        $categoriaPrincipalVer = $categoriaPrincipal;
-                    }
-                }
-
-                $categoriasSub = TipoArticulo::where('sub_categoria_id', $id)->where('oculto', 'false')->get();
-            }
-        } else {
-            $categoriaPrincipalVer = $categoria;
-
-            $categorias = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
-                ->where('oculto', 'false')
-                ->where('principal', 'false')
-                ->where('sub_categoria_id', $categoria->id)
-                ->get();
-
-            $categoriasSub = $categorias;
-        }
-
-        // -------------------------------------------------------
-        // FIX: lógica de productos sin duplicados
-        // -------------------------------------------------------
-        $isParent = TipoArticulo::where('sub_categoria_id', $id)->get();
-
-        if ($isParent->isEmpty()) {
-            // Nodo hoja: muestra directamente sus productos
-            $tieneProductos = 1;
-            $productos = $categoria->productos;
-        } else {
-            // Tiene hijos: acumula productos de los hijos
-            $categoriasHijos = TipoArticulo::where('sub_categoria_id', $categoria->id)->get();
-
-            // Primero agregar productos propios de la categoría si los tiene
-            $productosPropios = $categoria->productos;
-            if (!$productosPropios->isEmpty()) {
-                $productos = $productos->merge($productosPropios);
-            }
-
-            // Luego agregar productos de los hijos
-            foreach ($categoriasHijos as $categoriaHija) {
-                $productosHija = $categoriaHija->productos;
-                if (!$productosHija->isEmpty()) {
-                    $productos = $productos->merge($productosHija);
-                }
-            }
-
-            if ($categoria->principal == 'true' && $productos->isEmpty()) {
-                // Categoría raíz sin productos: muestra subcategorías
-                $tieneProductos = 0;
-            } elseif ($productos->isNotEmpty()) {
-                // Tiene productos (propios o de hijos): los muestra
-                $tieneProductos = 1;
-            } else {
-                $tieneProductos = 0;
-            }
-        }
-        // -------------------------------------------------------
-
-        \Log::info('DEBUG productos()', [
-            'id'              => $id,
-            'categoria_name'  => $categoria->name,
-            'principal'       => $categoria->principal,
-            'tieneProductos'  => $tieneProductos,
-            'productos_count' => $productos->count(),
-            'categoriasSub_count' => $categoriasSub ? count($categoriasSub) : 0,
-            'productos_ids'   => $productos->pluck('id')->toArray(),
-        ]);
-
         $metadatos = Metadato::where('seccion', 'catalogo')->first();
 
-        $categoriasF = TipoArticulo::orderByRaw("CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC")
+        $orderRaw = "CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC";
+
+        $categoria = TipoArticulo::where('oculto', 'false')->findOrFail($id);
+        $categoriaSelect = $categoria;
+
+        /*
+        Buscamos la categoría madre real para marcar arriba
+        AUTOMOTOR / DETAILING / FUNDAS HR.
+    */
+        $categoriaPrincipalVer = $categoria;
+        while ($categoriaPrincipalVer && $categoriaPrincipalVer->principal == 'false' && $categoriaPrincipalVer->sub_categoria_id) {
+            $padre = TipoArticulo::where('oculto', 'false')->find($categoriaPrincipalVer->sub_categoria_id);
+
+            if (!$padre) {
+                break;
+            }
+
+            $categoriaPrincipalVer = $padre;
+        }
+
+        /*
+        Sidebar: siempre muestra las subcategorías directas de la categoría madre.
+    */
+        $categorias = TipoArticulo::orderByRaw($orderRaw)
+            ->where('oculto', 'false')
+            ->where('principal', 'false')
+            ->where('sub_categoria_id', $categoriaPrincipalVer->id)
+            ->get();
+
+        /*
+        Contenido principal:
+        - Si la categoría tiene hijos, mostramos subcategorías.
+        - Si no tiene hijos, mostramos productos paginados.
+        Así una categoría madre no muestra productos desordenados de entrada.
+    */
+        $categoriasSub = TipoArticulo::orderByRaw($orderRaw)
+            ->where('oculto', 'false')
+            ->where('principal', 'false')
+            ->where('sub_categoria_id', $categoria->id)
+            ->get();
+
+        if ($categoriasSub->isNotEmpty()) {
+            $tieneProductos = 0;
+
+            $productos = Articulo::whereRaw('1 = 0')
+                ->paginate(12)
+                ->withQueryString();
+        } else {
+            $tieneProductos = 1;
+
+            $productos = Articulo::where('oculto', 'false')
+                ->whereNotNull('sub_categoria')
+                ->where('sub_categoria', $categoria->id)
+                ->orderByRaw($orderRaw)
+                ->paginate(12)
+                ->withQueryString();
+        }
+
+        $categoriasF = TipoArticulo::orderByRaw($orderRaw)
             ->where('oculto', 'false')
             ->where('principal', 'true')
             ->get();
 
         if (Auth::guard('cliente')->check()) {
             $cliente = Auth::guard('cliente')->user();
-            $asignadas = $cliente->categoriasPermitidas()->where('principal', 'true')->get();
+            $asignadas = $cliente->categoriasPermitidas()
+                ->where('principal', 'true')
+                ->orderByRaw($orderRaw)
+                ->get();
+
             $categoriasprin = $asignadas->isNotEmpty() ? $asignadas : $categoriasF;
         } else {
             $categoriasprin = $categoriasF;
         }
 
         if (request()->ajax()) {
-            return view('partials.productosOrCategorias', compact('categoria', 'productos', 'categoriasSub', 'tieneProductos'))->render();
+            return view('partials.productosOrCategorias', compact(
+                'categoria',
+                'productos',
+                'categoriasSub',
+                'tieneProductos'
+            ))->render();
         }
 
-        return view('page.newcategoria', compact('inicio', 'active', 'categoria', 'categorias', 'titulo', 'route', 'metadatos', 'productos', 'categoriasprin', 'categoriasSub', 'tieneProductos', 'categoriaPrincipalVer', 'categoriaSelect'));
+        return view('page.newcategoria', compact(
+            'inicio',
+            'active',
+            'categoria',
+            'categorias',
+            'titulo',
+            'route',
+            'metadatos',
+            'productos',
+            'categoriasprin',
+            'categoriasSub',
+            'tieneProductos',
+            'categoriaPrincipalVer',
+            'categoriaSelect'
+        ));
     }
+
 
     public function producto(Articulo $articulo)
     {

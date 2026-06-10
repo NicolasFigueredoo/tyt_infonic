@@ -722,8 +722,8 @@ body .productosCpC .categoriaContainer {
                             </div>
                             <div>
                                 <p class="tituloClass" style="color:#fff; font-weight: 600; font-size:26px; margin-bottom:0px">
-                                    @if (session('locale') === 'es') {{ $categoria->name }}
-                                    @else {{ $categoria->nameEnglish }} @endif
+                                    @if (session('locale') === 'es') {{ $item->name }}
+                                    @else {{ $item->nameEnglish }} @endif
                                 </p>
                             </div>
                             <div>
@@ -847,6 +847,32 @@ body .productosCpC .categoriaContainer {
                 }
             });
         }
+
+        $(document).on('click', '.productos-pagination a', function(e) {
+            e.preventDefault();
+
+            const url = $(this).attr('href');
+            if (!url) return;
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    if ($(window).width() >= 992) {
+                        $('.pcProductos.productosCpC').html(response);
+                    } else {
+                        $('.mobileProductos.productosCpC').html(response);
+                    }
+
+                    $('html, body').animate({
+                        scrollTop: $('.contenedorSubcat').offset().top - 120
+                    }, 250);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al paginar productos:', error);
+                }
+            });
+        });
 
         function handleButtonClick(itemId, encontro, routeUrl, tieneProductos) {
             $('.accordion-button').removeClass('boldSubcategoria');

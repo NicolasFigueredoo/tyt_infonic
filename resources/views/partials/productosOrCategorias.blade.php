@@ -42,6 +42,12 @@
 
     @endforeach
 
+    @if (method_exists($productos, 'links'))
+        <div class="col-12 d-flex justify-content-center mt-4 productos-pagination">
+            {{ $productos->links() }}
+        </div>
+    @endif
+
 @else
 
     @foreach ($categoriasSub as $categoria)
