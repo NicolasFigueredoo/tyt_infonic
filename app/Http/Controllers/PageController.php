@@ -168,16 +168,24 @@ class PageController extends Controller
 
     if ($categoriasSub->isNotEmpty()) {
         $tieneProductos = 0;
-
         $productos = collect();
     } else {
         $tieneProductos = 1;
 
+        // Primero buscamos por el campo directo sub_categoria
         $productos = Articulo::where('oculto', 'false')
             ->whereNotNull('sub_categoria')
             ->where('sub_categoria', $categoria->id)
             ->orderByRaw($orderRaw)
             ->get();
+
+        // Si no hay resultados, buscamos por la tabla pivot categoria_producto
+        if ($productos->isEmpty()) {
+            $productos = $categoria->productos()
+                ->where('oculto', 'false')
+                ->orderByRaw($orderRaw)
+                ->get();
+        }
     }
 
     $categoriasF = TipoArticulo::orderByRaw($orderRaw)
