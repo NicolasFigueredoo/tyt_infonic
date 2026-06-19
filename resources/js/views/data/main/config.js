@@ -35,6 +35,7 @@ import { routes as SeccionesRoutes } from '../secciones/config'
 import { routes as LogosRoutes } from '../logos/config'
 
 import { routes as SliderRoutes } from '../slider/config'
+import { routes as PostulacionesRoutes } from '../curriculum/config'
 
 
 
@@ -60,7 +61,7 @@ import { routes as ArchivosMedia } from '../archivosMedia/config'
 
 
 import { routes as Metricas } from '../metricas/config'
-
+import { routes as EmpleosRoutes } from '../empleos/config'
 
 
 
@@ -147,7 +148,11 @@ export const routes = {
 
         FormClientesRoutes,
 
-        ArchivosMedia
+        ArchivosMedia,
+
+        EmpleosRoutes,
+
+        PostulacionesRoutes
 
         
 

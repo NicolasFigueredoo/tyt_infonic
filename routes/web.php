@@ -12,6 +12,7 @@ use App\Http\Controllers\ZonaPrivadaController;
 use App\Models\Articulo;
 use App\Models\Cliente;
 use App\Http\Controllers\Admin\ClienteController;
+use App\Http\Controllers\Admin\EmpleosController;
 use App\Http\Controllers\SitemapController;
 
 
@@ -49,6 +50,14 @@ Route::group(['prefix' => '/'], function () {
         dd(Articulo::updateApi());
         Cliente::updateApi();
     });
+
+
+    Route::get('/trabaja-con-nosotros', [PageController::class, 'empleos'])->name('page.empleos');
+    Route::post('/trabaja-con-nosotros', [PageController::class, 'empleosPostular'])->name('page.empleos.post');
+
+
+    Route::get('/trabaja-con-nosotros', [PageController::class, 'empleos'])->name('page.empleos');
+    Route::post('/trabaja-con-nosotros', [PageController::class, 'empleosPostular'])->name('page.empleos.post');
     Route::get('', [PageController::class, 'index'])->name('page.inicio');
     Route::get('validar/{id}', [PageController::class, 'validar'])->name('page.activar.cuenta');
     Route::get('/quienes_somos', [PageController::class, 'empresa'])->name('page.empresa');
@@ -94,12 +103,13 @@ Route::post('/changeIdioma', [InicioController::class, 'changeIdioma'])->name('c
 
 Route::post('/guardar-cantidad', [ArticuloController::class, 'guardarCantidadEnSesion'])->name('guardar.cantidad');
 
-Route::group(['prefix' => 'adm/archivosmedia', 'as' => 'archivosmedia.'], function() {
+Route::group(['prefix' => 'adm/archivosmedia', 'as' => 'archivosmedia.'], function () {
     Route::post('/',            [ArchivosMediaController::class, 'all']);
     Route::get('/{id}',         [ArchivosMediaController::class, 'find']);
     Route::post('/store/{id?}', [ArchivosMediaController::class, 'store']);
     Route::get('/delete/{id}',  [ArchivosMediaController::class, 'delete']);
 });
+
 
 Route::middleware(['auth.cliente'])->group(function () {
     Route::get('salir', [LoginClienteController::class, 'salir'])->name('salir');

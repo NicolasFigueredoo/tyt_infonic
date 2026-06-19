@@ -789,6 +789,14 @@
                     Contact
                 @endif
             </a>
+            <a class="nav-item nav-link mx-1 {{ $active == 'page.empleos' ? 'activeheader' : '' }} newnav-link"
+                href="{{ route('page.empleos') }}">
+                @if (session('locale') === 'es')
+                    Trabajá con Nosotros
+                @else
+                    Work with Us
+                @endif
+            </a>
         @else
             <a class="nav-item nav-link mx-1 {{ $active == 'page.productosCategorias' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.productosCategorias') }}">
@@ -870,33 +878,33 @@
         @endif
 
         {{-- Idioma desktop --}}
-      <div class="dropdown language-dropdown d-none d-lg-block ms-1">
-    <button class="language-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        @if (session('locale') === 'es')
-            Español (ES)
-        @else
-            English (EN)
-        @endif
-    </button>
-
-    <div class="dropdown-menu language-menu dropdown-menu-end">
-        <form action="{{ route('changeIdioma') }}" method="POST">
-            @csrf
-            <input type="hidden" name="idioma" value="es">
-            <button type="submit" class="{{ session('locale') === 'es' ? 'active' : '' }}">
-                Español (ES)
+        <div class="dropdown language-dropdown d-none d-lg-block ms-1">
+            <button class="language-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                @if (session('locale') === 'es')
+                    Español (ES)
+                @else
+                    English (EN)
+                @endif
             </button>
-        </form>
 
-        <form action="{{ route('changeIdioma') }}" method="POST">
-            @csrf
-            <input type="hidden" name="idioma" value="en">
-            <button type="submit" class="{{ session('locale') === 'en' ? 'active' : '' }}">
-                English (EN)
-            </button>
-        </form>
-    </div>
-</div>
+            <div class="dropdown-menu language-menu dropdown-menu-end">
+                <form action="{{ route('changeIdioma') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="idioma" value="es">
+                    <button type="submit" class="{{ session('locale') === 'es' ? 'active' : '' }}">
+                        Español (ES)
+                    </button>
+                </form>
+
+                <form action="{{ route('changeIdioma') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="idioma" value="en">
+                    <button type="submit" class="{{ session('locale') === 'en' ? 'active' : '' }}">
+                        English (EN)
+                    </button>
+                </form>
+            </div>
+        </div>
 
         {{-- Toggler mobile --}}
         <button class="navbar-toggler d-lg-none ms-1" type="button" data-bs-toggle="collapse"
@@ -917,13 +925,13 @@
                         Start
                     @endif
                 </a>
-           <a class="nav-item nav-link nav-link-client-mobile" href="https://www.tytsa.com.ar/registro">
-    @if (session('locale') === 'es')
-        Convertite en cliente
-    @else
-        Become a client
-    @endif
-</a>
+                <a class="nav-item nav-link nav-link-client-mobile" href="https://www.tytsa.com.ar/registro">
+                    @if (session('locale') === 'es')
+                        Convertite en cliente
+                    @else
+                        Become a client
+                    @endif
+                </a>
                 <a class="nav-item nav-link {{ $active == 'page.empresa' ? 'activeheader' : '' }}"
                     href="{{ route('page.empresa') }}">
                     @if (session('locale') === 'es')
@@ -946,6 +954,14 @@
                         Contacto
                     @else
                         Contact
+                    @endif
+                </a>
+                <a class="nav-item nav-link {{ $active == 'page.empleos' ? 'activeheader' : '' }}"
+                    href="{{ route('page.empleos') }}">
+                    @if (session('locale') === 'es')
+                        Trabajá con Nosotros
+                    @else
+                        Work with Us
                     @endif
                 </a>
             @else
@@ -984,33 +1000,33 @@
                 </a>
             @endif
 
-       <div class="dropdown language-dropdown language-dropdown-mobile">
-    <button class="language-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        @if (session('locale') === 'es')
-            Español (ES)
-        @else
-            English (EN)
-        @endif
-    </button>
+            <div class="dropdown language-dropdown language-dropdown-mobile">
+                <button class="language-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    @if (session('locale') === 'es')
+                        Español (ES)
+                    @else
+                        English (EN)
+                    @endif
+                </button>
 
-    <div class="dropdown-menu language-menu">
-        <form action="{{ route('changeIdioma') }}" method="POST">
-            @csrf
-            <input type="hidden" name="idioma" value="es">
-            <button type="submit" class="{{ session('locale') === 'es' ? 'active' : '' }}">
-                Español (ES)
-            </button>
-        </form>
+                <div class="dropdown-menu language-menu">
+                    <form action="{{ route('changeIdioma') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="idioma" value="es">
+                        <button type="submit" class="{{ session('locale') === 'es' ? 'active' : '' }}">
+                            Español (ES)
+                        </button>
+                    </form>
 
-        <form action="{{ route('changeIdioma') }}" method="POST">
-            @csrf
-            <input type="hidden" name="idioma" value="en">
-            <button type="submit" class="{{ session('locale') === 'en' ? 'active' : '' }}">
-                English (EN)
-            </button>
-        </form>
-    </div>
-</div>
+                    <form action="{{ route('changeIdioma') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="idioma" value="en">
+                        <button type="submit" class="{{ session('locale') === 'en' ? 'active' : '' }}">
+                            English (EN)
+                        </button>
+                    </form>
+                </div>
+            </div>
 
             @if (!Auth::guard('cliente')->check())
                 <button class="btn zp_container py-1 px-4 mt-2" type="button"

@@ -16,8 +16,10 @@ use App\Models\CategoriasArticulo;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ContactoMail;
 use App\Mail\CuentaActiva;
+use App\Mail\PostulacionMail;
 use App\Models\Articulo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use stdClass;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
@@ -131,105 +133,105 @@ class PageController extends Controller
     }
 
     public function productos($id, $productosVisible)
-{
-    $active = 'page.productos';
-    $titulo = 'Categorias';
-    $route = 'page.producto';
-    $inicio = Inicio::first();
-    $metadatos = Metadato::where('seccion', 'catalogo')->first();
+    {
+        $active = 'page.productos';
+        $titulo = 'Categorias';
+        $route = 'page.producto';
+        $inicio = Inicio::first();
+        $metadatos = Metadato::where('seccion', 'catalogo')->first();
 
-    $orderRaw = "CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC";
+        $orderRaw = "CASE WHEN orden IS NULL OR orden = '' THEN 1 ELSE 0 END, orden ASC";
 
-    $categoria = TipoArticulo::where('oculto', 'false')->findOrFail($id);
-    $categoriaSelect = $categoria;
+        $categoria = TipoArticulo::where('oculto', 'false')->findOrFail($id);
+        $categoriaSelect = $categoria;
 
-    $categoriaPrincipalVer = $categoria;
-    while ($categoriaPrincipalVer && $categoriaPrincipalVer->principal == 'false' && $categoriaPrincipalVer->sub_categoria_id) {
-        $padre = TipoArticulo::where('oculto', 'false')->find($categoriaPrincipalVer->sub_categoria_id);
+        $categoriaPrincipalVer = $categoria;
+        while ($categoriaPrincipalVer && $categoriaPrincipalVer->principal == 'false' && $categoriaPrincipalVer->sub_categoria_id) {
+            $padre = TipoArticulo::where('oculto', 'false')->find($categoriaPrincipalVer->sub_categoria_id);
 
-        if (!$padre) {
-            break;
+            if (!$padre) {
+                break;
+            }
+
+            $categoriaPrincipalVer = $padre;
         }
 
-        $categoriaPrincipalVer = $padre;
-    }
-
-    $categorias = TipoArticulo::orderByRaw($orderRaw)
-        ->where('oculto', 'false')
-        ->where('principal', 'false')
-        ->where('sub_categoria_id', $categoriaPrincipalVer->id)
-        ->get();
-
-    $categoriasSub = TipoArticulo::orderByRaw($orderRaw)
-        ->where('oculto', 'false')
-        ->where('principal', 'false')
-        ->where('sub_categoria_id', $categoria->id)
-        ->get();
-
-    if ($categoriasSub->isNotEmpty()) {
-        $tieneProductos = 0;
-        $productos = collect();
-    } else {
-        $tieneProductos = 1;
-
-        // Primero buscamos por el campo directo sub_categoria
-        $productos = Articulo::where('oculto', 'false')
-            ->whereNotNull('sub_categoria')
-            ->where('sub_categoria', $categoria->id)
-            ->orderByRaw($orderRaw)
+        $categorias = TipoArticulo::orderByRaw($orderRaw)
+            ->where('oculto', 'false')
+            ->where('principal', 'false')
+            ->where('sub_categoria_id', $categoriaPrincipalVer->id)
             ->get();
 
-        // Si no hay resultados, buscamos por la tabla pivot categoria_producto
-        if ($productos->isEmpty()) {
-            $productos = $categoria->productos()
-                ->where('oculto', 'false')
+        $categoriasSub = TipoArticulo::orderByRaw($orderRaw)
+            ->where('oculto', 'false')
+            ->where('principal', 'false')
+            ->where('sub_categoria_id', $categoria->id)
+            ->get();
+
+        if ($categoriasSub->isNotEmpty()) {
+            $tieneProductos = 0;
+            $productos = collect();
+        } else {
+            $tieneProductos = 1;
+
+            // Primero buscamos por el campo directo sub_categoria
+            $productos = Articulo::where('oculto', 'false')
+                ->whereNotNull('sub_categoria')
+                ->where('sub_categoria', $categoria->id)
                 ->orderByRaw($orderRaw)
                 ->get();
+
+            // Si no hay resultados, buscamos por la tabla pivot categoria_producto
+            if ($productos->isEmpty()) {
+                $productos = $categoria->productos()
+                    ->where('oculto', 'false')
+                    ->orderByRaw($orderRaw)
+                    ->get();
+            }
         }
-    }
 
-    $categoriasF = TipoArticulo::orderByRaw($orderRaw)
-        ->where('oculto', 'false')
-        ->where('principal', 'true')
-        ->get();
-
-    if (Auth::guard('cliente')->check()) {
-        $cliente = Auth::guard('cliente')->user();
-        $asignadas = $cliente->categoriasPermitidas()
+        $categoriasF = TipoArticulo::orderByRaw($orderRaw)
+            ->where('oculto', 'false')
             ->where('principal', 'true')
-            ->orderByRaw($orderRaw)
             ->get();
 
-        $categoriasprin = $asignadas->isNotEmpty() ? $asignadas : $categoriasF;
-    } else {
-        $categoriasprin = $categoriasF;
-    }
+        if (Auth::guard('cliente')->check()) {
+            $cliente = Auth::guard('cliente')->user();
+            $asignadas = $cliente->categoriasPermitidas()
+                ->where('principal', 'true')
+                ->orderByRaw($orderRaw)
+                ->get();
 
-    if (request()->ajax()) {
-        return view('partials.productosOrCategorias', compact(
+            $categoriasprin = $asignadas->isNotEmpty() ? $asignadas : $categoriasF;
+        } else {
+            $categoriasprin = $categoriasF;
+        }
+
+        if (request()->ajax()) {
+            return view('partials.productosOrCategorias', compact(
+                'categoria',
+                'productos',
+                'categoriasSub',
+                'tieneProductos'
+            ))->render();
+        }
+
+        return view('page.newcategoria', compact(
+            'inicio',
+            'active',
             'categoria',
+            'categorias',
+            'titulo',
+            'route',
+            'metadatos',
             'productos',
+            'categoriasprin',
             'categoriasSub',
-            'tieneProductos'
-        ))->render();
+            'tieneProductos',
+            'categoriaPrincipalVer',
+            'categoriaSelect'
+        ));
     }
-
-    return view('page.newcategoria', compact(
-        'inicio',
-        'active',
-        'categoria',
-        'categorias',
-        'titulo',
-        'route',
-        'metadatos',
-        'productos',
-        'categoriasprin',
-        'categoriasSub',
-        'tieneProductos',
-        'categoriaPrincipalVer',
-        'categoriaSelect'
-    ));
-}
 
 
     public function producto(Articulo $articulo)
@@ -357,6 +359,7 @@ class PageController extends Controller
         return view('page.newproducto', compact('active', 'producto', 'metadatos', 'categorias'));
         //return view('page.producto', compact('active', 'producto', 'metadatos', 'categorias'));
     }
+
     public function search($code)
     {
         $inicio = Inicio::first();
@@ -398,8 +401,6 @@ class PageController extends Controller
             'remoteip' => $request->ip(), // Opcional: puedes incluir la IP del usuario
         ]);
 
-
-
         $recaptchaData = $recaptchaVerifyResponse->json();
 
         // Validar el score del captcha
@@ -424,4 +425,46 @@ class PageController extends Controller
 
         return $respuesta;
     }
-};
+
+    public function empleos()
+    {
+        $active = 'page.empleos';
+        $inicio = Inicio::first();
+        $metadatos = Metadato::where('seccion', 'contacto')->first();
+        $ofertas = DB::table('ofertas_laborales')
+            ->where('activo', 1)
+            ->orderByDesc('fecha_publicacion')
+            ->get();
+        $contactos = Contacto::where('seccion', 'contacto')->get();
+        $title = "Trabajá con Nosotros";
+        $headerexpand = true;
+
+        return view('page.empleos', compact('active', 'inicio', 'metadatos', 'ofertas', 'contactos', 'title', 'headerexpand'));
+    }
+
+    public function empleosPostular(Request $request)
+    {
+        $request->validate([
+            'nombre'    => 'required|string|max:255',
+            'apellido'  => 'required|string|max:255',
+            'direccion' => 'required|string|max:255',
+            'telefono'  => 'required|numeric',
+            'email'     => 'required|email|max:255',
+            'cv'        => 'required|mimes:doc,docx,pdf|max:5120',
+        ]);
+
+        $cvPath = $request->file('cv')->store('cvs', 'public');
+
+        $data = $request->only(['nombre', 'apellido', 'direccion', 'telefono', 'email']);
+        $data['cv_path']   = $cvPath;
+        $data['oferta_id'] = $request->oferta_id ?: null;
+        $data['created_at'] = now();
+        $data['updated_at'] = now();
+
+        DB::table('postulaciones')->insert($data);
+
+        Mail::to('rrhh@tytsa.com.ar')->send(new PostulacionMail($data));
+
+        return response()->json(['mensaje' => 'Tu postulación fue enviada correctamente. ¡Gracias!']);
+    }
+}

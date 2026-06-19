@@ -6,7 +6,6 @@ import Main from './components/Layouts/Main.vue'
 import Dropdown from './components/Dropdown/index.vue'
 import Paginator from './components/Paginator/index.vue'
 import { InputsRegister } from './components/Inputs/index.js'
-// import './assets/main.scss'
 
 window.public_path = document.head.querySelector('meta[name="public-path"]')
 if (window.public_path) {
@@ -22,7 +21,6 @@ window.httpRequest = ({
     errors
 }) => {
     if (errors && Object.prototype.toString.call(errors) === '[object Object]') {
-        // clear all errors
         Object.keys(errors).forEach(key => {
             errors[key].splice(0, errors[key].length)
         })
@@ -40,13 +38,11 @@ window.httpRequest = ({
             if (response.ok) {
                 resolve(bodyData)
             }
-            // Código de estado: 401 Unauthorized
             if (response.status == 401) {
                 console.log('acceso denegado')
                 router.push('/adm/login')
                 reject(response)
             }
-            // Código de estado: 405 Method Not Allowed
             if (response.status == 405) {
                 bodyData.then((data) => {
                     awesomeModal.error('Error', `
@@ -56,10 +52,7 @@ window.httpRequest = ({
                     reject(data)
                 })
             }
-            // Código de estado: 422 Unprocessable Content
             if (response.status == 422) {
-                // asignar errores
-                // se debe resolver la promesa para obtener los datos
                 bodyData.then((data) => {
                     if (errors && Object.prototype.toString.call(errors) === '[object Object]') {
                         Object.assign(errors, data.errors)
@@ -75,7 +68,6 @@ window.httpRequest = ({
                     reject(data)
                 })
             }
-            // Código de estado: 500 Internal Server Error
             if (response.status == 500) {
                 bodyData.then((data) => {
                     reject(data)
@@ -86,13 +78,10 @@ window.httpRequest = ({
                 })
             }
             reject(response)
-            // throw new Error(response);
         })
     })
-
 }
 
-// public asset or public path or path asset
 window.pathAsset = (path) => {
     return `${window.public_path}/${path}`
 }
@@ -111,8 +100,6 @@ window.$globalState = reactive({
 })
 
 $globalState.sidebar = {
-    // side-bar__wrapper--relative
-    // side-bar__wrapper--absolute
     position: {
         value: 'side-bar__wrapper--absolute',
         toggle() {
@@ -120,8 +107,6 @@ $globalState.sidebar = {
             localStorage.setItem('sidebar-position', this.value)
         }
     },
-    // side-bar__wrapper--left
-    // side-bar__wrapper--right
     place: {
         value: 'side-bar__wrapper--left',
         toggle() {
@@ -129,8 +114,6 @@ $globalState.sidebar = {
             localStorage.setItem('sidebar-place', this.value)
         }
     },
-    // side-bar__wrapper--show
-    // side-bar__wrapper--hide
     show: {
         value: 'side-bar__wrapper--hide',
         toggle() {
@@ -146,6 +129,7 @@ $globalState.sidebar.show.value     = localStorage.getItem('sidebar-show')     |
 
 const app = createApp(App)
 window.appInstance = app
+
 const logout = () => {
     let modal = awesomeModal.loading()
     httpRequest({
@@ -155,17 +139,20 @@ const logout = () => {
     .then((data) => {
         modal.close()
         window.$globalState.auth.status = 'error'
-        router.push('/adm/login')
+        window.$globalState.auth.user = {}
+        window.$globalState.render = false
+        setTimeout(() => {
+            window.$globalState.render = true
+            router.push('/adm/login')
+        }, 50)
     })
     .catch((error) => {
         modal.close()
     })
-
 }
 window.logout = logout
 
 app.provide('$globalState', window.$globalState)
-//app.config.globalProperties.$globalState = window.$globalState
 
 window.verifyAuth = async () => {
     return new Promise((resolve, reject) => {
@@ -191,10 +178,10 @@ window.verifyAuth = async () => {
     })
 }
 window.verifyAuth()
+
 app.mixin({
     methods: {
         pathAsset(path) {
-            // remove first slash
             path = path.replace(/^\//, '')
             return `${window.public_path}/${path}`
         },
@@ -204,15 +191,6 @@ app.mixin({
     }
 })
 
-/*
-en vue 3 no se puede usar el filters globalProperties
-en si lugar se recomienda usar computed
-app.config.globalProperties.$filters = {
-    pathAsset(path) {
-        return window.pathAsset(path)
-    }
-}
-*/
 window.toCurrency = (numero, decimales = 2) => {
     let separadorDecimal = document.head.querySelector('meta[name="decimal-separator"]')
     if (separadorDecimal) {
@@ -220,7 +198,7 @@ window.toCurrency = (numero, decimales = 2) => {
     } else {
         separadorDecimal = ",";
     }
-    let separadorMiles   = document.head.querySelector('meta[name="thousands-separator"]')
+    let separadorMiles = document.head.querySelector('meta[name="thousands-separator"]')
     if (separadorMiles) {
         separadorMiles = separadorMiles.content
     } else {
@@ -232,7 +210,6 @@ window.toCurrency = (numero, decimales = 2) => {
         return "";
     }
 
-    // Redondeamos
     if ( !isNaN(parseInt(decimales)) ) {
         if (decimales >= 0) {
             numero = numero.toFixed(decimales);
@@ -245,7 +222,6 @@ window.toCurrency = (numero, decimales = 2) => {
         numero = numero.toString();
     }
 
-    // Damos formato
     partes = numero.split(".", 2);
     array = partes[0].split("");
     for (var i=array.length-3; i>0 && array[i-1]!=="-"; i-=3) {
@@ -268,7 +244,6 @@ app.use(router)
 
 app.component('SectionHeader', SectionHeader)
 app.component('Dropdown', Dropdown)
-
 app.component('Main', Main)
 app.component('Paginator', Paginator)
 InputsRegister(app)
@@ -280,40 +255,27 @@ window.dataPaginator = ({
     filtersKeys
 }) => {
     const trash = ref(false)
-    // defino la variable paginator, que se usará para almacenar los datos de la paginación
     const paginator = reactive({})
-
-    // defino la variable endpoint, que se usará para almacenar la url de la api
     const endpoint = reactive({
         dataUrl: urlBase,
         lastUrl: null,
     })
-    
-    // defino la variable filters, que se usará para almacenar los filtros de búsqueda
     const filters = reactive({})
-
-    // defino la variable appliedFilters, que se usará para almacenar los filtros de búsqueda aplicados
     const appliedFilters = reactive({})
 
-    // se inicializan los filtros
     filtersKeys.forEach((key) => {
         filters[key] = ''
         appliedFilters[key] = ''
     })
 
-
-    // se define la función applyFilters, que se ejecutará al hacer click en el botón de buscar
     const applyFilters = () => {
-        // se asignan los valores de los filtros a la variable appliedFilters
         appliedFilters.code = filters.code
         appliedFilters.name = filters.name
         appliedFilters.description = filters.description
         appliedFilters.oculto = filters.oculto
-        // se ejecuta la función syncData, que se encarga de sincronizar los datos con la api
         syncData(endpoint.dataUrl)
     }
 
-    // se define la función clearFilters, que se ejecutará al hacer click en el botón de limpiar filtros
     const clearFilters = () => {
         for (const key in filters) {
             filters[key] = ''
@@ -328,35 +290,25 @@ window.dataPaginator = ({
         console.log(this);
     }
 
-    // se define la función syncData, que se encarga de sincronizar los datos con la api
     const syncData = (url) => {
-        // se muestra el modal de carga
         let modal = awesomeModal.loading()
-        // se verifica si el endpoint tiene la propiedad lastUrl, si no la tiene, se le asigna el valor de dataUrl
         if ( !endpoint.lastUrl ) {
             endpoint.lastUrl = endpoint.dataUrl
         }
-
-        // se verifica si se ha pasado una url como parámetro, si no se ha pasado, se le asigna el valor de lastUrl
         if (!url) {
             url = endpoint.lastUrl
         } else {
             endpoint.lastUrl = url
         }
-
-        // se crea un objeto FormData, que se usará para adjuntar los filtros de búsqueda
         const form_data = new FormData()
         for (const [key, value] of Object.entries(appliedFilters)) {
             if (value) {
                 form_data.append('filters[' + key + ']', value)
             }
         }
-        // si la variable trash es true
         if (trash.value) {
             form_data.append('trash', 1)
         }
-
-        // se realiza la petición a la api
         httpRequest({
             url: url,
             method: 'POST',
@@ -371,7 +323,6 @@ window.dataPaginator = ({
         })
     }
 
-    // watch para el cambio de la variable trash
     watch(trash, () => {
         syncData(endpoint.dataUrl)
     })

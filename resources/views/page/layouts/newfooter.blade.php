@@ -147,6 +147,15 @@
                             @endif
                         </a>
                         <br>
+                        <a href="{{ route('page.empleos') }}"
+                            style="color:#fff; text-decoration:none; font-size:16px;line-height: 35px;">
+                            @if (session('locale') === 'es')
+                                Trabajá con Nosotros
+                            @else
+                                Work with Us
+                            @endif
+                        </a>
+                        <br>
                     </div>
 
                     <div class="col-12 d-flex gap-2 mobileProductos">
@@ -177,6 +186,17 @@
                                 Contact
                             @endif
                         </a><br>
+                        <a href="{{ route('page.empleos') }}"
+                            style="color:#fff; text-decoration:none; font-size:16px;line-height: 35px;">
+                            @if (session('locale') === 'es')
+                                Trabajá con Nosotros
+                            @else
+                                Work with Us
+                            @endif
+                        </a>
+                        <br>
+
+
                     </div>
 
                 </div>
@@ -269,7 +289,8 @@
 
 
     @if (session('locale') === 'es')
-        <a class="footer-credit text-white" target="_blank" rel="noopener noreferrer" href="https://infonicsoluciones.com/">
+        <a class="footer-credit text-white" target="_blank" rel="noopener noreferrer"
+            href="https://infonicsoluciones.com/">
             Desarrollado por Infonic Soluciones
         </a>
     @else

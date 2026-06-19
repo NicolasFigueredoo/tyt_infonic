@@ -18,170 +18,149 @@ const $globalState = inject("$globalState");
                 />
             </router-link>
             <div class="side-bar__menu">
-                <details class="side-bar__item">
-                    <summary style="cursor: pointer">Inicio</summary>
-                    <RouterLink class="side-bar__item" to="/adm/sliders">
-                        <i class="fas fa-images"></i>
-                        <span>Slider</span>
-                    </RouterLink>
-                    <RouterLink class="side-bar__item" to="/adm/inicio">
+
+                <!-- MENÚ NORMAL (todos excepto RRHH) -->
+                <template v-if="!$globalState.auth.user.can_view_cvs">
+                    <details class="side-bar__item">
+                        <summary style="cursor: pointer">Inicio</summary>
+                        <RouterLink class="side-bar__item" to="/adm/sliders">
+                            <i class="fas fa-images"></i>
+                            <span>Slider</span>
+                        </RouterLink>
+                        <RouterLink class="side-bar__item" to="/adm/inicio">
+                            <i class="fas fa-pen"></i>
+                            <span>Contenido</span>
+                        </RouterLink>
+                        <RouterLink class="side-bar__item" to="/adm/logosNuevos">
+                            <i class="fas fa-images"></i>
+                            <span>Logos</span>
+                        </RouterLink>
+                    </details>
+
+                    <details class="side-bar__item">
+                        <summary style="cursor: pointer">Metricas</summary>
+                        <RouterLink class="side-bar__item" to="/adm/metricas">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Grafico productos</span>
+                        </RouterLink>
+                        <RouterLink class="side-bar__item" to="/adm/metricas/pedidos">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Grafico pedidos</span>
+                        </RouterLink>
+                        <RouterLink class="side-bar__item" to="/adm/metricas/referrer">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Grafico clientes</span>
+                        </RouterLink>
+                    </details>
+
+                    <RouterLink class="side-bar__item" to="/adm/empresa">
                         <i class="fas fa-pen"></i>
-                        <span>Contenido</span>
-                    </RouterLink>
-                    <RouterLink class="side-bar__item" to="/adm/logosNuevos">
-                        <i class="fas fa-images"></i>
-                        <span>Logos</span>
-                    </RouterLink>
-                </details>
-
-                <details class="side-bar__item">
-                    <summary style="cursor: pointer">Metricas</summary>
-                    <RouterLink class="side-bar__item" to="/adm/metricas">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Grafico productos</span>
-                    </RouterLink>
-                    <RouterLink
-                        class="side-bar__item"
-                        to="/adm/metricas/pedidos"
-                    >
-                        <i class="fas fa-chart-line"></i>
-                        <span>Grafico pedidos</span>
-                    </RouterLink>
-                    <RouterLink
-                        class="side-bar__item"
-                        to="/adm/metricas/referrer"
-                    >
-                        <i class="fas fa-chart-pie"></i>
-                        <span>Grafico clientes</span>
-                    </RouterLink>
-                </details>
-
-                <RouterLink class="side-bar__item" to="/adm/empresa">
-                    <i class="fas fa-pen"></i>
-                    <span>¿Quienes somos?</span>
-                </RouterLink>
-
-                <details class="side-bar__item">
-                    <summary style="cursor: pointer">Productos</summary>
-
-                    <RouterLink class="side-bar__item" to="/adm/tipo-articulo">
-                        <i class="fas fa-box-open"></i>
-                        <span>Categoria</span>
-                    </RouterLink>
-                    <RouterLink
-                        class="side-bar__item d-none"
-                        to="/adm/sub-categoria"
-                    >
-                        <i class="fas fa-box-open"></i>
-                        <span>Sub Categoria</span>
-                    </RouterLink>
-                    <RouterLink class="side-bar__item" to="/adm/articulo">
-                        <i class="fas fa-box-open"></i>
-                        <span>Articulos</span>
-                    </RouterLink>
-                </details>
-
-                <!-- <RouterLink class="side-bar__item" to="/adm/tutoriales">
-                    <i class="fab fa-youtube-square"></i>
-                    <span>Tutoriales</span>
-                </RouterLink> -->
-
-                <details class="side-bar__item">
-                    <summary style="cursor: pointer">Contenido</summary>
-                    <RouterLink class="side-bar__item" to="/adm/contacto">
-                        <i class="fas fa-pen"></i>
-                        <span>Contactos</span>
-                    </RouterLink>
-                    <RouterLink class="side-bar__item" to="/adm/carrito">
-                        <i class="fas fa-pen"></i>
-                        <span>Carrito</span>
-                    </RouterLink>
-                    <RouterLink class="side-bar__item" to="/adm/modal">
-                        <i class="fas fa-pen"></i>
-                        <span>Modal Inicio</span>
+                        <span>¿Quienes somos?</span>
                     </RouterLink>
 
-                    <RouterLink
-                        class="side-bar__item"
-                        to="/adm/seccionesNaranjas"
-                    >
-                        <i class="fas fa-pen"></i>
-                        <span>Iconos</span>
+                    <details class="side-bar__item">
+                        <summary style="cursor: pointer">Productos</summary>
+                        <RouterLink class="side-bar__item" to="/adm/tipo-articulo">
+                            <i class="fas fa-box-open"></i>
+                            <span>Categoria</span>
+                        </RouterLink>
+                        <RouterLink class="side-bar__item d-none" to="/adm/sub-categoria">
+                            <i class="fas fa-box-open"></i>
+                            <span>Sub Categoria</span>
+                        </RouterLink>
+                        <RouterLink class="side-bar__item" to="/adm/articulo">
+                            <i class="fas fa-box-open"></i>
+                            <span>Articulos</span>
+                        </RouterLink>
+                    </details>
+
+                    <details class="side-bar__item">
+                        <summary style="cursor: pointer">Contenido</summary>
+                        <RouterLink class="side-bar__item" to="/adm/contacto">
+                            <i class="fas fa-pen"></i>
+                            <span>Contactos</span>
+                        </RouterLink>
+                        <RouterLink class="side-bar__item" to="/adm/carrito">
+                            <i class="fas fa-pen"></i>
+                            <span>Carrito</span>
+                        </RouterLink>
+                        <RouterLink class="side-bar__item" to="/adm/modal">
+                            <i class="fas fa-pen"></i>
+                            <span>Modal Inicio</span>
+                        </RouterLink>
+                        <RouterLink class="side-bar__item" to="/adm/seccionesNaranjas">
+                            <i class="fas fa-pen"></i>
+                            <span>Iconos</span>
+                        </RouterLink>
+                        <RouterLink class="side-bar__item" to="/adm/redes">
+                            <i class="fas fa-pen"></i>
+                            <span>Redes</span>
+                        </RouterLink>
+                    </details>
+
+                    <RouterLink class="side-bar__item" to="/adm/clientes">
+                        <i class="fas fa-address-card"></i>
+                        <span>Clientes</span>
                     </RouterLink>
 
-                    <RouterLink class="side-bar__item" to="/adm/redes">
-                        <i class="fas fa-pen"></i>
-                        <span>Redes</span>
+                    <RouterLink class="side-bar__item" to="/adm/clientestemp">
+                        <i class="fas fa-address-card"></i>
+                        <span>Clientes temporales</span>
                     </RouterLink>
-                </details>
 
-                <RouterLink class="side-bar__item" to="/adm/clientes">
-                    <i class="fas fa-address-card"></i>
-                    <span>Clientes</span>
-                </RouterLink>
+                    <RouterLink class="side-bar__item" to="/adm/clientespotenciales">
+                        <i class="fas fa-address-card"></i>
+                        <span>Clientes potenciales</span>
+                    </RouterLink>
 
-                <RouterLink class="side-bar__item" to="/adm/clientestemp">
-                    <i class="fas fa-address-card"></i>
-                    <span>Clientes temporales</span>
-                </RouterLink>
+                    <RouterLink class="side-bar__item" to="/adm/listaPrecios">
+                        <i class="fa-solid fa-bars"></i>
+                        <span>Lista de precios</span>
+                    </RouterLink>
 
-                <RouterLink
-                    class="side-bar__item"
-                    to="/adm/clientespotenciales"
-                >
-                    <i class="fas fa-address-card"></i>
-                    <span>Clientes potenciales</span>
-                </RouterLink>
+                    <RouterLink class="side-bar__item" to="/adm/pedidos">
+                        <i class="fas fa-boxes"></i>
+                        <span>Pedidos</span>
+                    </RouterLink>
 
-                <RouterLink class="side-bar__item" to="/adm/listaPrecios">
-                    <i class="fa-solid fa-bars"></i>
-                    <span>Lista de precios</span>
-                </RouterLink>
+                    <RouterLink class="side-bar__item" to="/adm/metadatos">
+                        <i class="fas fa-address-card"></i>
+                        <span>Metadatos</span>
+                    </RouterLink>
 
-                <RouterLink class="side-bar__item" to="/adm/pedidos">
-                    <i class="fas fa-boxes"></i>
-                    <span>Pedidos</span>
-                </RouterLink>
+                    <RouterLink class="side-bar__item" to="/adm/user">
+                        <i class="fas fa-address-card"></i>
+                        <span>Usuarios</span>
+                    </RouterLink>
 
-                <RouterLink class="side-bar__item" to="/adm/metadatos">
-                    <i class="fas fa-address-card"></i>
-                    <span>Metadatos</span>
-                </RouterLink>
+                    <RouterLink class="side-bar__item" to="/adm/formclientes">
+                        <i class="fas fa-address-card"></i>
+                        <span>Formulario clientes</span>
+                    </RouterLink>
 
-                <!--
-                <RouterLink class="side-bar__item" to="/adm/data">
-                    <i class="fas fa-database"></i>
-                    <span>Maestros / Catálogos</span>
-                </RouterLink>
-                -->
-                <!-- <RouterLink class="side-bar__item" to="/adm/stock">
-                    <i class="fas fa-inbox"></i>
-                    <span>Stock</span>
-                </RouterLink>
-                <RouterLink class="side-bar__item" to="/adm/upload">
-                    <i class="fas fa-upload"></i>
-                    <span>Subir Archivos</span>
-                </RouterLink> 
-                -->
+                    <RouterLink class="side-bar__item" to="/adm/data/archivosmedia">
+                        <i class="fas fa-photo-video"></i>
+                        <span>Archivos multimedia</span>
+                    </RouterLink>
 
-                <RouterLink class="side-bar__item" to="/adm/user">
-                    <i class="fas fa-address-card"></i>
-                    <span>Usuarios</span>
-                </RouterLink>
+                    <RouterLink class="side-bar__item" to="/adm/data/empleos">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Ofertas laborales</span>
+                    </RouterLink>
+                </template>
 
-                <RouterLink class="side-bar__item" to="/adm/formclientes">
-                    <i class="fas fa-address-card"></i>
-                    <span>Formulario clientes</span>
-                </RouterLink>
-                <RouterLink class="side-bar__item" to="/adm/data/archivosmedia">
-                    <i class="fas fa-photo-video"></i>
-                    <span>Archivos multimedia</span>
-                </RouterLink>
+          <!-- MENÚ RRHH (solo CVs y Ofertas) -->
+<template v-if="$globalState.auth.user.can_view_cvs">
+    <RouterLink class="side-bar__item" to="/adm/data/postulaciones">
+        <i class="fas fa-file-alt"></i>
+        <span>CVs Recibidos</span>
+    </RouterLink>
+    <RouterLink class="side-bar__item" to="/adm/data/empleos">
+        <i class="fas fa-briefcase"></i>
+        <span>Ofertas Laborales</span>
+    </RouterLink>
+</template>
 
-                <!-- <RouterLink class="side-bar__item" to="/adm/configurations">
-                    <i class="fas fa-cogs"></i>
-                    <span>Configuración</span>
-                </RouterLink> -->
             </div>
         </div>
     </div>
