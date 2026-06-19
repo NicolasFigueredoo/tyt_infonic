@@ -21,6 +21,11 @@ const $globalState = inject("$globalState");
 
                 <!-- MENÚ NORMAL (todos excepto RRHH) -->
                 <template v-if="!$globalState.auth.user.can_view_cvs">
+
+                        <pre style="background:red; color:white; font-size:11px; padding:6px; white-space:pre-wrap; word-break:break-all;">
+DEBUG can_view_cvs: {{ $globalState.auth.user.can_view_cvs }}
+DEBUG user completo: {{ JSON.stringify($globalState.auth.user) }}
+    </pre>
                     <details class="side-bar__item">
                         <summary style="cursor: pointer">Inicio</summary>
                         <RouterLink class="side-bar__item" to="/adm/sliders">

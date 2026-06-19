@@ -271,9 +271,10 @@
                 <div class="nosotros-box mt-3">
                     <h5>Nosotros</h5>
                     <p>En TyT S.A. sabemos que detrás de cada logro hay personas comprometidas que hacen posible nuestro crecimiento día a día.</p>
-                    <p>Somos una empresa argentina con más de 50 años de trayectoria en el mercado de accesorios automotrices y, a lo largo de este camino, hemos construido nuestra historia apoyándonos en valores que siguen guiando nuestro trabajo: la responsabilidad, el respeto y el trabajo en equipo.</p>
-                    <p>Nos gusta sumar personas con ganas de aprender, aportar ideas y crecer junto a nosotros. Valoramos el compromiso, la colaboración y la actitud de quienes buscan dar lo mejor de sí en cada desafío.</p>
-                    <p>Si te entusiasma ser parte de una empresa con experiencia, proyectos y nuevos desafíos por delante, te invitamos a compartir tu CV.</p>
+                    <p>Somos una empresa argentina con más de 50 años de trayectoria, construida sobre valores que nos acompañan desde nuestros inicios: responsabilidad, respeto y trabajo en equipo.</p>
+                    <p>Nos gusta sumar personas con ganas de aprender y aportar ideas. Valoramos el compromiso, la colaboración y la actitud de quienes buscan dar lo mejor de sí en cada desafío.</p>
+                    <p>Promovemos un ambiente cercano, donde escuchar, acompañar y aprender forman parte de nuestra forma de trabajar.
+Si te entusiasma ser parte de una empresa con experiencia, proyectos y nuevos desafíos por delante, te invitamos a compartirnos tu CV.</p>
                 </div>
 
                 {{-- Datos de contacto de la BD --}}
