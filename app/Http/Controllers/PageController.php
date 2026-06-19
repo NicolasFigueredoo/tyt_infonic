@@ -463,8 +463,12 @@ class PageController extends Controller
 
         DB::table('postulaciones')->insert($data);
 
-        Mail::to('rrhh@tytsa.com.ar')->send(new PostulacionMail($data));
+        try {
+            Mail::to('rrhh@tytsa.com.ar')->send(new PostulacionMail($data));
+        } catch (\Throwable $e) {
+            \Log::error('Error enviando mail de postulación: ' . $e->getMessage());
+        }
 
-        return response()->json(['mensaje' => 'Tu postulación fue enviada correctamente. ¡Gracias!']);
+        return redirect()->route('page.empleos')->with('exito', 'Tu postulación fue enviada correctamente. ¡Gracias!');
     }
 }

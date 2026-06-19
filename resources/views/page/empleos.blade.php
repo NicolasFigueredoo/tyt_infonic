@@ -186,6 +186,29 @@
             {{-- Lista de ofertas --}}
             <div style="flex:1; min-width:0;">
 
+                <div class="mb-4">
+                    <h2 style="font-weight:700; font-size:26px; color:#161414; margin-bottom:8px;">
+                        Búsquedas abiertas
+                    </h2>
+                    <p style="font-size:15px; color:#666; margin-bottom:0;">
+                        Conocé nuestras oportunidades laborales disponibles y postulate a la que más se ajuste a tu perfil.
+                    </p>
+
+                    @if(session('exito'))
+                        <div id="msg-exito-global" style="margin-top:16px; background:#e6f7ec; border:1px solid #28a745; color:#1e7e34; padding:14px 20px; border-radius:8px; font-weight:600; font-size:15px;">
+                            {{ session('exito') }}
+                        </div>
+                    @endif
+
+                    @if($errors->any())
+                        <div id="msg-error-global" style="margin-top:16px; background:#fdecea; border:1px solid #dc3545; color:#a82433; padding:14px 20px; border-radius:8px; font-weight:600; font-size:15px;">
+                            @foreach($errors->all() as $error)
+                                {{ $error }}<br>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
                 @if($ofertas->isEmpty())
                     <div class="oferta-card text-center py-5">
                         <p style="color:#999; font-size:16px;">No hay ofertas disponibles en este momento.</p>
@@ -311,7 +334,7 @@
     <div class="modal-box">
         <button class="modal-close" onclick="cerrarModal()">&times;</button>
         <h5>Postularme — <span id="modal-titulo-oferta"></span></h5>
-        <form id="form-postulacion" enctype="multipart/form-data">
+        <form id="form-postulacion" action="{{ route('page.empleos.post') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="oferta_id" id="input-oferta-id">
 
@@ -338,8 +361,6 @@
             <label class="form-label-emp">CV (PDF, DOC, DOCX — máx. 5MB) *</label>
             <input type="file" name="cv" class="form-control-emp" accept=".pdf,.doc,.docx" required>
 
-            <div id="msg-postulacion" style="display:none; margin-bottom:10px; font-weight:600;"></div>
-
             <div class="d-flex justify-content-end gap-2 mt-2">
                 <button type="button" onclick="cerrarModal()" style="border-radius:35px; padding:8px 24px; border:1px solid #ccc; background:#fff; cursor:pointer;">Cancelar</button>
                 <button type="submit" class="btn-postular" style="margin-top:0;">Enviar postulación</button>
@@ -357,7 +378,6 @@
     function abrirModal(id, titulo) {
         document.getElementById('input-oferta-id').value = id;
         document.getElementById('modal-titulo-oferta').textContent = titulo;
-        document.getElementById('msg-postulacion').style.display = 'none';
         document.getElementById('form-postulacion').reset();
         document.getElementById('input-oferta-id').value = id;
         document.getElementById('modal-postulacion').classList.add('show');
@@ -367,40 +387,18 @@
         document.getElementById('modal-postulacion').classList.remove('show');
     }
 
-    document.getElementById('form-postulacion').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const form = this;
-        const data = new FormData(form);
-        const msg  = document.getElementById('msg-postulacion');
+    // Si hay mensaje de éxito o error al cargar la página, hacemos scroll hacia él
+    document.addEventListener('DOMContentLoaded', function () {
+        const msgExito = document.getElementById('msg-exito-global');
+        const msgError = document.getElementById('msg-error-global');
+        const target = msgExito || msgError;
 
-        fetch('{{ route('page.empleos.post') }}', {
-            method: 'POST',
-            body: data,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(r => r.json())
-        .then(res => {
-            if (res.mensaje) {
-                msg.style.color   = 'green';
-                msg.textContent   = res.mensaje;
-                msg.style.display = 'block';
-                form.reset();
-                setTimeout(() => cerrarModal(), 3000);
-            }
-            if (res.errors) {
-                const errores = Object.values(res.errors).flat().join(' | ');
-                msg.style.color   = 'red';
-                msg.textContent   = errores;
-                msg.style.display = 'block';
-            }
-        })
-        .catch(() => {
-            msg.style.color   = 'red';
-            msg.textContent   = 'Ocurrió un error. Intentá de nuevo.';
-            msg.style.display = 'block';
-        });
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                target.style.display = 'none';
+            }, 6000);
+        }
     });
 </script>
 
