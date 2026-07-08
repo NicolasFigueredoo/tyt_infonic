@@ -436,7 +436,9 @@ class TipoArticuloController extends Controller
 
         try {
 
-            for ($page = 0; $page <= 8; $page++) {
+            $page = 0;
+
+            while (true) {
 
                 $apiUrl = $baseApiUrl . $page;
 
@@ -449,6 +451,10 @@ class TipoArticuloController extends Controller
                 ]);
 
                 $productos = json_decode($respuesta->getBody(), true);
+
+                if (empty($productos['values'])) {
+                    break;
+                }
 
                 foreach ($productos['values'] as $value) {
                     $cuenta = $value['cuenta'];
@@ -496,6 +502,8 @@ class TipoArticuloController extends Controller
                         $clientesCreados++;
                     }
                 }
+
+                $page++;
             }
 
             return response()->json([
