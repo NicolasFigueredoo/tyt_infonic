@@ -1,6 +1,6 @@
 <template>
     <div class="login">
-        <form class="login__form" @submit.prevent="login">
+        <form class="login__form" v-if="step === 'credentials'" @submit.prevent="login">
             <div class="login__header">
                 <img :src="pathAsset('/images/logoProd.png')" alt="TyT">
                 <h1>Iniciar sesión</h1>
@@ -26,23 +26,50 @@
                 </button>
             </div>
         </form>
+
+        <form class="login__form" v-else @submit.prevent="verifyCode">
+            <div class="login__header">
+                <img :src="pathAsset('/images/logoProd.png')" alt="TyT">
+                <h1>Ingresá el código</h1>
+            </div>
+            <p style="text-align:center; margin-bottom: 20px;">
+                Te enviamos un código de acceso a tu correo. Ingresalo para continuar.
+            </p>
+            <InputText
+                label="Código"
+                placeholder=""
+                v-model="form.code"
+                :error="errors.code"
+                class="mb-15"
+            />
+            <div class="login__footer">
+                <button class="btn btn--black" type="submit">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Verificar código
+                </button>
+            </div>
+        </form>
     </div>
 </template>
 
 <script setup>
-    import { reactive } from 'vue'
+    import { reactive, ref } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
 
     const route = useRoute()
     const router = useRouter()
 
+    const step = ref('credentials')
+
     const form = reactive({
         username: '',
         password: '',
+        code: '',
     })
     const errors = reactive({
         username: [],
         password: [],
+        code: [],
     })
 
     const login = () => {
@@ -58,7 +85,39 @@
             errors: errors,
         })
         .then((data) => {
-            // $globalState.user = response.data.user
+            modal.close()
+            if (data && data.data && data.data.two_factor) {
+                step.value = 'code'
+                return
+            }
+            window.verifyAuth().then(result => {
+                if (result) {
+                    router.push('/adm')
+                }
+            })
+        })
+        .catch((response) => {
+            modal.close()
+            if (response.status == 401) {
+                errors.username.push('Usuario o contraseña incorrectos')
+                return false
+            }
+        })
+    }
+
+    const verifyCode = () => {
+        let modal = awesomeModal.loading()
+        var form_data = new FormData();
+
+        form_data.append("username", form.username);
+        form_data.append("code", form.code);
+        httpRequest({
+            url: window.public_path + '/adm/login/verify-code',
+            method: 'POST',
+            data: form_data,
+            errors: errors,
+        })
+        .then((data) => {
             window.verifyAuth().then(result => {
                 if (result) {
                     modal.close()
@@ -69,7 +128,7 @@
         .catch((response) => {
             modal.close()
             if (response.status == 401) {
-                errors.username.push('Usuario o contraseña incorrectos')
+                errors.code.push('Código inválido o vencido')
                 return false
             }
         })

@@ -1046,19 +1046,59 @@ Route::post('login', function (Request $request) {
 
 
 
-    if (! auth()->guard('web')->attempt($credentials, true)) {
+    if (! auth()->guard('web')->validate($credentials)) {
 
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
+    $user = \App\Models\User::where($credentials['email'] ?? null ? 'email' : 'username', $credentials['email'] ?? $credentials['username'])->first();
+
     if ($request->api == true) {
+
+        auth()->guard('web')->login($user, true);
 
         return response()->json(['vendedor' => 'authorized']);
     }
 
-    return redirect()->intended('adm/check-auth');
+    $codigo = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-    //return redirect()->intended('adm/check-auth');
+    $user->two_factor_code = $codigo;
+    $user->two_factor_expires_at = now()->addMinutes(10);
+    $user->save();
+
+    \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\CodigoAccesoAdmin($codigo));
+
+    return response()->json(['two_factor' => true]);
+
+});
+
+
+
+Route::post('login/verify-code', function (Request $request) {
+
+    if (filter_var($request->username, FILTER_VALIDATE_EMAIL)) {
+        $user = \App\Models\User::where('email', $request->username)->first();
+    } else {
+        $user = \App\Models\User::where('username', $request->username)->first();
+    }
+
+    if (! $user || ! $user->two_factor_code || $user->two_factor_code !== $request->code) {
+
+        return response()->json(['error' => 'Código inválido'], 401);
+    }
+
+    if (! $user->two_factor_expires_at || now()->greaterThan($user->two_factor_expires_at)) {
+
+        return response()->json(['error' => 'El código venció, iniciá sesión nuevamente'], 401);
+    }
+
+    $user->two_factor_code = null;
+    $user->two_factor_expires_at = null;
+    $user->save();
+
+    auth()->guard('web')->login($user, true);
+
+    return response()->json(['message' => 'authorized']);
 
 });
 
