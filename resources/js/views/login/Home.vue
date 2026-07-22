@@ -86,7 +86,7 @@
         })
         .then((data) => {
             modal.close()
-            if (data && data.data && data.data.two_factor) {
+            if (data && data.two_factor) {
                 step.value = 'code'
                 return
             }
