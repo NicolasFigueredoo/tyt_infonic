@@ -74,7 +74,7 @@
                         <a href="{{ route('page.productos', ['id' => 1618, 'productosVisible' => 0]) }}"
                             style="color:#fff; text-decoration:none; font-size:16px;line-height: 35px;">Detail</a><br>
                         <a href="{{ route('page.productos', ['id' => 1709, 'productosVisible' => 0]) }}"
-                            style="color:#fff; text-decoration:none; font-size:16px;line-height: 35px;">Fundas HR</a><br>
+                            style="color:#fff; text-decoration:none; font-size:16px;line-height: 35px; white-space: nowrap;">Fundas HR</a><br>
                     </div>
 
                     <div class="col-12 d-flex gap-3 mobileProductos">
@@ -83,7 +83,7 @@
                         <a href="{{ route('page.productos', ['id' => 1618, 'productosVisible' => 0]) }}"
                             style="color:#fff; text-decoration:none; font-size:16px;line-height: 35px;">Detail</a><br>
                         <a href="{{ route('page.productos', ['id' => 1709, 'productosVisible' => 0]) }}"
-                            style="color:#fff; text-decoration:none; font-size:16px;line-height: 35px;">Fundas HR</a><br>
+                            style="color:#fff; text-decoration:none; font-size:16px;line-height: 35px; white-space: nowrap;">Fundas HR</a><br>
                     </div>
 
                 </div>

