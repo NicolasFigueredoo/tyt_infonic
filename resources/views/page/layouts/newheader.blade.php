@@ -166,8 +166,15 @@
     }
 
     #search::placeholder,
-    #search-form-input::placeholder {
+    #search-form-input::placeholder,
+    #search-form-input-mobile::placeholder {
         color: #FFFFFF;
+    }
+
+    @media (min-width: 577px) {
+        #search-form-mobile {
+            display: none;
+        }
     }
 
     .search-container {
@@ -371,7 +378,7 @@
             max-height: 68px;
         }
 
-        .nav-unico .search-container input {
+        .nav-unico #search-form .search-container input {
             width: 130px !important;
         }
 
@@ -550,7 +557,7 @@
             max-height: 58px;
         }
 
-        .nav-unico .search-container {
+        .nav-unico #search-form .search-container {
             display: none;
         }
 
@@ -916,6 +923,18 @@
     {{-- COLLAPSE MOBILE/TABLET --}}
     <div class="collapse" id="navCollapseUnico">
         <div class="navbar-nav d-flex flex-column mt-3 px-2 pb-3">
+
+            {{-- Buscador mobile --}}
+            <form method="POST" action="{{ route('page.productosSearch') }}" id="search-form-mobile" class="mb-2">
+                @csrf
+                <div class="search-container search-container-mobile">
+                    <input type="text" id="search-form-input-mobile" name="search" class="py-1 px-4"
+                        style="width:100%;border-radius:35px;border:solid 2px #fff;background:none;color:#fff;"
+                        @if (session('locale') === 'es') placeholder="Buscar" @else placeholder="Search" @endif>
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </div>
+            </form>
+
             @if (!Auth::guard('cliente')->check())
                 <a class="nav-item nav-link {{ $active == 'page.inicio' ? 'activeheader' : '' }}"
                     href="{{ route('page.inicio') }}">
@@ -1119,6 +1138,7 @@
     }
 
     searchHandler('#search-form-input');
+    searchHandler('#search-form-input-mobile');
 
     function contarProductosEnCarrito() {
         const obj_fila = localStorage.getItem('obj_fila');
