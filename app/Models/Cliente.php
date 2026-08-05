@@ -22,6 +22,20 @@ class Cliente extends Model implements Authenticatable
     protected $fillable = ['cuenta', 'estado', 'password','nombre','email'];
     protected $casts = [];
 
+    // El sync con el ERP guarda el vendedor en CustomerCode / CustomerDescription.
+    // Se exponen con los nombres que usa el front (codigoVendedor / vendedorDescripcion).
+    protected $appends = ['codigoVendedor', 'vendedorDescripcion'];
+
+    public function getCodigoVendedorAttribute()
+    {
+        return $this->attributes['CustomerCode'] ?? null;
+    }
+
+    public function getVendedorDescripcionAttribute()
+    {
+        return $this->attributes['CustomerDescription'] ?? null;
+    }
+
     public static function boot()
     {
         parent::boot();
