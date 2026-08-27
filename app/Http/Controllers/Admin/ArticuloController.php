@@ -104,9 +104,7 @@ $results = $data->paginate(30);
 
     {
 
-        UpdateArticulo::dispatch();
-
-        return response()->json(['message' => $this->name . ' Actualizacion en progreso'], 200);
+        return $this->prueba();
 
     }
 
@@ -124,34 +122,57 @@ $results = $data->paginate(30);
 
 
 
-  public function prueba()
+    public function prueba()
     {
-        $client           = new Client();
-        $apiUrlBase       = 'https://tytsaapi.ddns.net:8443/productos?maxCount=100&page=';
-        $totalPages       = 8;
-        $productosCreados     = 0;
-        $productosActualizados= 0;
-        $codigosApi           = []; // para almacenar todos los códigos que devuelve la API
+        set_time_limit(600);
+        ini_set('max_execution_time', 600);
+
+        $client = new Client([
+            'timeout' => 60,
+            'connect_timeout' => 15,
+        ]);
+
+        $apiUrlBase = 'https://tytsaapi.ddns.net:8443/productos?maxCount=100&page=';
+        $page = 0;
+        $maxPages = 100;
+        $productosCreados = 0;
+        $productosActualizados = 0;
+        $productosEliminados = 0;
+        $codigosApi = [];
 
         try {
-            // 1) Recorrer todas las páginas de la API
-            for ($page = 0; $page <= $totalPages; $page++) {
-                $apiUrl   = $apiUrlBase . $page;
-                $response = $client->request('GET', $apiUrl, [
+            do {
+                $response = $client->request('GET', $apiUrlBase . $page, [
                     'headers' => [
                         'X-Api-Key' => 'AQEBEQtz8rVkLVvBKgmYuUmALBpS5GaLG28OUFpd3O08GlfjWrjH3wWt5Hk0GEra5MsMseWHtdise8FGiu3P7iNjEocjzW2T+IJ7c9TH0rbf17trDAc8qK4mAgvv3AMcu5CjuDwzR+9qS1uF5ZZwUNN/FFgD8HRRgkik86XZfttYSPK68RpnFSBrT2XDUTeXvcOdjTjzH7AwJDHj+o9WwskXIQT7Ubgj+oAaTjd4Obq+uyObg75n033Ct5ZO53JTHsvCDfbcMU1BtRtw4CvFynEPiEQ7rufWnDThqJQKqfLvSgBjr2c3L3QV8EKvuNsnNO9vQGrZbuY58sMTXGmMio1iTUxwrnOPpsCO9L4Jr1Onwgu+bIStiJcS2w/3hbzVWR2yo1YWvW0LjJquBNx1I46aUCiw82jHAffI788rrNNuYA8='
                     ],
                     'verify' => false,
                 ]);
 
-                $productos = json_decode($response->getBody(), true);
+                $productos = json_decode($response->getBody()->getContents(), true);
 
-                foreach ($productos['values'] as $value) {
-                    // 1.1) Guardar el código en el array de la API
-                    $codigosApi[] = $value['codigoProducto'];
+                if (!is_array($productos) || !array_key_exists('values', $productos)) {
+                    throw new \RuntimeException('La API devolvió una respuesta inválida en la página ' . $page);
+                }
 
-                    // 1.2) Buscar si existe el artículo
-                    $articulo = Articulo::where('code', $value['codigoProducto'])->first();
+                $values = is_array($productos['values']) ? $productos['values'] : [];
+
+                if (count($values) === 0) {
+                    break;
+                }
+
+                foreach ($values as $value) {
+                    $codigoProducto = trim($value['codigoProducto'] ?? '');
+
+                    if ($codigoProducto === '') {
+                        continue;
+                    }
+
+                    $codigosApi[] = $codigoProducto;
+                    $categoria = null;
+                    $subCategoria = null;
+
+                    $articulo = Articulo::where('code', $codigoProducto)->first();
 
                     // — Normalizar y guardar categoría principal —
                     if (!empty($value['unidadNegocio'])) {
@@ -195,22 +216,21 @@ $results = $data->paginate(30);
                         }
                     }
 
-                    // 2) Crear o actualizar Artículo
                     $dataArticulo = [
-                        'codigoAnterior'   => $value['codigoAnterior'],
-                        'tipoProducto'     => $value['tipoProducto'],
-                        'name'             => $value['productoDescripcion'],
-                        'precioVigente'    => $value['precioVigente'],
-                        'stock-disponible' => $value['disponible'],
-                        'bultoMinorista'   => $value['bultoMinorista'],
-                        'bultoMayorista'   => $value['bultoMayorista'],
+                        'codigoAnterior'   => $value['codigoAnterior'] ?? null,
+                        'tipoProducto'     => $value['tipoProducto'] ?? null,
+                        'name'             => $value['productoDescripcion'] ?? $codigoProducto,
+                        'precioVigente'    => $value['precioVigente'] ?? 0,
+                        'stock-disponible' => $value['disponible'] ?? 0,
+                        'bultoMinorista'   => $value['bultoMinorista'] ?? null,
+                        'bultoMayorista'   => $value['bultoMayorista'] ?? null,
                         'sub_categoria'    => $subCategoria->id ?? null,
-                        'marca'            => $value['marca'],
+                        'marca'            => $value['marca'] ?? null,
                     ];
 
                     if (! $articulo) {
                         $articulo = Articulo::create(array_merge(
-                            ['code' => $value['codigoProducto']],
+                            ['code' => $codigoProducto],
                             $dataArticulo
                         ));
                         $productosCreados++;
@@ -219,14 +239,23 @@ $results = $data->paginate(30);
                         $productosActualizados++;
                     }
 
-                    // 3) Sincronizar pivote de categorías
-                    if (isset($subCategoria)) {
+                    if ($subCategoria) {
                         $articulo->categorias()->syncWithoutDetaching($subCategoria->id);
                     }
                 }
+
+                $page++;
+
+                if ($page >= $maxPages) {
+                    throw new \RuntimeException('Se alcanzó el límite de seguridad de ' . $maxPages . ' páginas');
+                }
+            } while (true);
+
+            if (count($codigosApi) === 0) {
+                throw new \RuntimeException('La API no devolvió ningún código de producto');
             }
 
-            // 4) Eliminar artículos que ya no están en la API
+            $codigosApi = array_values(array_unique($codigosApi));
             $aEliminar = Articulo::whereNotIn('code', $codigosApi)->get();
             $productosEliminados = $aEliminar->count();
             foreach ($aEliminar as $art) {
@@ -234,9 +263,10 @@ $results = $data->paginate(30);
                 $art->delete();
             }
 
-            // 5) Responder con todos los conteos
             return response()->json([
                 'message'               => 'Carga masiva completada',
+                'paginas procesadas'    => $page,
+                'productos recibidos'   => count($codigosApi),
                 'productos creados'     => $productosCreados,
                 'productos actualizados'=> $productosActualizados,
                 'productos eliminados'  => $productosEliminados,
