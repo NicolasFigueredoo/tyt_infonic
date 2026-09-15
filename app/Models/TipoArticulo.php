@@ -108,7 +108,9 @@ class TipoArticulo extends Model {
 
     public function productos()
     {
-        return $this->belongsToMany(Articulo::class, 'categoria_producto');
+        return $this->belongsToMany(Articulo::class, 'categoria_producto')
+            ->withPivot('orden')
+            ->orderByRaw('CASE WHEN categoria_producto.orden IS NULL THEN 1 ELSE 0 END, categoria_producto.orden ASC');
     }
 
 

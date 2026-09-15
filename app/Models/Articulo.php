@@ -125,7 +125,7 @@ class Articulo extends Model {
 
     {
 
-        return $this->belongsToMany(TipoArticulo::class, 'categoria_producto');
+        return $this->belongsToMany(TipoArticulo::class, 'categoria_producto')->withPivot('orden');
 
     }
 

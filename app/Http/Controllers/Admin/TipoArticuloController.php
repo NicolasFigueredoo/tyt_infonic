@@ -219,10 +219,13 @@ class TipoArticuloController extends Controller
             $item->productos()->detach();
 
 
-            foreach ($productos as $producto) {
+            // El índice dentro del array define el orden en que se muestran los productos
+            foreach (array_values($productos) as $orden => $producto) {
                 $existingProducto = Articulo::find($producto['id']);
                 if ($existingProducto) {
-                    $existingProducto->categorias()->syncWithoutDetaching($item->id);
+                    $existingProducto->categorias()->syncWithoutDetaching([
+                        $item->id => ['orden' => $orden],
+                    ]);
                 }
             }
         }

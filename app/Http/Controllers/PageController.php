@@ -183,9 +183,11 @@ class PageController extends Controller
 
             // Si no hay resultados, buscamos por la tabla pivot categoria_producto
             if ($productos->isEmpty()) {
+                // La relación ya ordena por el orden definido en la pivot (categoria_producto.orden);
+                // como desempate se usa el orden propio del artículo.
                 $productos = $categoria->productos()
-                    ->where('oculto', 'false')
-                    ->orderByRaw($orderRaw)
+                    ->where('articulos.oculto', 'false')
+                    ->orderByRaw("CASE WHEN articulos.orden IS NULL OR articulos.orden = '' THEN 1 ELSE 0 END, articulos.orden ASC")
                     ->get();
             }
         }

@@ -63,13 +63,58 @@
                         :options="form.productos"
                         track-by="id"
                         label="name"
-                        placeholder="Selecciona productos"
+                        placeholder="Buscar y agregar productos"
                         multiple
                         id="productos"
                         :close-on-select="false"
                         :preserve-search="true"
+                        :show-labels="false"
                     >
+                        <template #selection="{ values, isOpen }">
+                            <span
+                                v-if="values.length && !isOpen"
+                                class="multiselect__single"
+                            >
+                                {{ values.length }} producto{{ values.length === 1 ? "" : "s" }} seleccionado{{ values.length === 1 ? "" : "s" }}
+                            </span>
+                        </template>
                     </multiselect>
+
+                    <small
+                        v-if="form.seleccionados && form.seleccionados.length"
+                        class="text-muted d-block mt-2"
+                    >
+                        Arrastr&aacute; los productos para definir el orden en que se muestran.
+                    </small>
+                    <div class="chips-sortable">
+                        <span
+                            v-for="(producto, index) in form.seleccionados"
+                            :key="producto.id"
+                            class="chip"
+                            :class="{
+                                'chip--dragging': dragIndex === index,
+                                'chip--over': overIndex === index && dragIndex !== index,
+                            }"
+                            draggable="true"
+                            @dragstart="onDragStart(index, $event)"
+                            @dragenter.prevent="overIndex = index"
+                            @dragover.prevent
+                            @drop.prevent="onDrop(index)"
+                            @dragend="onDragEnd"
+                            :title="producto.name"
+                        >
+                            <span class="chip__handle">&#8942;&#8942;</span>
+                            <span class="chip__text">{{ producto.name }}</span>
+                            <button
+                                type="button"
+                                class="chip__remove"
+                                @click.stop="quitar(index)"
+                                title="Quitar"
+                            >
+                                &times;
+                            </button>
+                        </span>
+                    </div>
                 </div>
             </template>
         </div>
@@ -151,8 +196,7 @@
 </template>
 
 <script setup>
-import { reactive } from "@vue/reactivity";
-import { defineProps } from "vue";
+import { ref, defineProps } from "vue";
 import Multiselect from "vue-multiselect";
 
 // Definición de propiedades
@@ -167,16 +211,99 @@ const props = defineProps({
     },
 });
 
-// Opciones para el select
-const options = reactive([
-    { id: 1, name: "Producto 1" },
-    { id: 2, name: "Producto 2" },
-    { id: 3, name: "Producto 3" },
-    { id: 4, name: "Producto 4" },
-    { id: 5, name: "Producto 5" },
-]);
+// Reordenamiento por arrastre de los productos seleccionados
+const dragIndex = ref(null);
+const overIndex = ref(null);
+
+const onDragStart = (index, event) => {
+    dragIndex.value = index;
+    event.dataTransfer.effectAllowed = "move";
+    // Firefox necesita datos para iniciar el arrastre
+    event.dataTransfer.setData("text/plain", String(index));
+};
+
+const onDrop = (index) => {
+    if (dragIndex.value === null || dragIndex.value === index) {
+        onDragEnd();
+        return;
+    }
+    const lista = props.form.seleccionados;
+    const [movido] = lista.splice(dragIndex.value, 1);
+    lista.splice(index, 0, movido);
+    onDragEnd();
+};
+
+const onDragEnd = () => {
+    dragIndex.value = null;
+    overIndex.value = null;
+};
+
+const quitar = (index) => {
+    props.form.seleccionados.splice(index, 1);
+};
 </script>
 
 <style lang="scss" scoped>
 @import "vue-multiselect/dist/vue-multiselect.min.css";
+
+.chips-sortable {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    background: #41b883;
+    color: #fff;
+    font-size: 13px;
+    line-height: 1;
+    cursor: grab;
+    user-select: none;
+    border: 2px solid transparent;
+    transition: opacity 0.15s, border-color 0.15s;
+
+    &:active {
+        cursor: grabbing;
+    }
+
+    &--dragging {
+        opacity: 0.4;
+    }
+
+    &--over {
+        border-color: #1b6b4a;
+        background: #2f9c6c;
+    }
+
+    &__handle {
+        opacity: 0.7;
+        letter-spacing: -3px;
+        font-size: 12px;
+    }
+
+    &__text {
+        white-space: nowrap;
+    }
+
+    &__remove {
+        border: none;
+        background: transparent;
+        color: #fff;
+        font-size: 16px;
+        line-height: 1;
+        padding: 0 0 0 4px;
+        cursor: pointer;
+        opacity: 0.8;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
 </style>
