@@ -174,11 +174,22 @@ class PageController extends Controller
         } else {
             $tieneProductos = 1;
 
-            // Primero buscamos por el campo directo sub_categoria
-            $productos = Articulo::where('oculto', 'false')
-                ->whereNotNull('sub_categoria')
-                ->where('sub_categoria', $categoria->id)
-                ->orderByRaw($orderRaw)
+            $ordenPivot = "CASE WHEN categoria_producto.orden IS NULL THEN 1 ELSE 0 END, categoria_producto.orden ASC";
+            $ordenArticulo = "CASE WHEN articulos.orden IS NULL OR articulos.orden = '' THEN 1 ELSE 0 END, articulos.orden ASC";
+
+            // Primero buscamos por el campo directo sub_categoria.
+            // El orden lo define el drag & drop del admin (categoria_producto.orden);
+            // los productos sin orden en la pivot van al final, ordenados por su orden propio.
+            $productos = Articulo::query()
+                ->select('articulos.*')
+                ->leftJoin('categoria_producto', function ($join) use ($categoria) {
+                    $join->on('categoria_producto.articulo_id', '=', 'articulos.id')
+                        ->where('categoria_producto.tipo_articulo_id', $categoria->id);
+                })
+                ->where('articulos.oculto', 'false')
+                ->whereNotNull('articulos.sub_categoria')
+                ->where('articulos.sub_categoria', $categoria->id)
+                ->orderByRaw("$ordenPivot, $ordenArticulo")
                 ->get();
 
             // Si no hay resultados, buscamos por la tabla pivot categoria_producto
@@ -187,7 +198,7 @@ class PageController extends Controller
                 // como desempate se usa el orden propio del artículo.
                 $productos = $categoria->productos()
                     ->where('articulos.oculto', 'false')
-                    ->orderByRaw("CASE WHEN articulos.orden IS NULL OR articulos.orden = '' THEN 1 ELSE 0 END, articulos.orden ASC")
+                    ->orderByRaw($ordenArticulo)
                     ->get();
             }
         }
