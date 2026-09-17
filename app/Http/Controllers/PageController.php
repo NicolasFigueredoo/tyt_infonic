@@ -177,7 +177,8 @@ class PageController extends Controller
             $ordenPivot = "CASE WHEN categoria_producto.orden IS NULL THEN 1 ELSE 0 END, categoria_producto.orden ASC";
             $ordenArticulo = "CASE WHEN articulos.orden IS NULL OR articulos.orden = '' THEN 1 ELSE 0 END, articulos.orden ASC";
 
-            // Primero buscamos por el campo directo sub_categoria.
+            // Un producto pertenece a la categoría si su campo directo sub_categoria (sync ERP)
+            // apunta a ella O si está vinculado desde el admin en la pivot categoria_producto.
             // El orden lo define el drag & drop del admin (categoria_producto.orden);
             // los productos sin orden en la pivot van al final, ordenados por su orden propio.
             $productos = Articulo::query()
@@ -187,20 +188,12 @@ class PageController extends Controller
                         ->where('categoria_producto.tipo_articulo_id', $categoria->id);
                 })
                 ->where('articulos.oculto', 'false')
-                ->whereNotNull('articulos.sub_categoria')
-                ->where('articulos.sub_categoria', $categoria->id)
+                ->where(function ($q) use ($categoria) {
+                    $q->where('articulos.sub_categoria', $categoria->id)
+                        ->orWhereNotNull('categoria_producto.tipo_articulo_id');
+                })
                 ->orderByRaw("$ordenPivot, $ordenArticulo")
                 ->get();
-
-            // Si no hay resultados, buscamos por la tabla pivot categoria_producto
-            if ($productos->isEmpty()) {
-                // La relación ya ordena por el orden definido en la pivot (categoria_producto.orden);
-                // como desempate se usa el orden propio del artículo.
-                $productos = $categoria->productos()
-                    ->where('articulos.oculto', 'false')
-                    ->orderByRaw($ordenArticulo)
-                    ->get();
-            }
         }
 
         $categoriasF = TipoArticulo::orderByRaw($orderRaw)

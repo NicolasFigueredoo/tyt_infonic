@@ -120,6 +120,7 @@ Route::middleware(['auth.cliente'])->group(function () {
     Route::get('carrito', [ZonaPrivadaController::class, 'carrito'])->name('page.carrito');
     Route::get('mi-perfil', [ZonaPrivadaController::class, 'miperfil'])->name('page.mi.perfil');
     Route::get('lista-precios', [ZonaPrivadaController::class, 'listaPrecios'])->name('page.listadeprecios');
+    Route::get('catalogos', [ZonaPrivadaController::class, 'catalogos'])->name('page.catalogos');
     Route::get('carrito-2', [ZonaPrivadaController::class, 'carritoPasoDos'])->name('page.carrito.paso.dos');
     Route::post('carrito-2', [ZonaPrivadaController::class, 'carritoPasoDosPost'])->name('page.carrito.paso.dos.post');
     Route::post('carrito', [ZonaPrivadaController::class, 'carrito_post'])->name('carrito_post');

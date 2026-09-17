@@ -808,9 +808,9 @@
             <a class="nav-item nav-link mx-1 {{ $active == 'page.productosCategorias' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.productosCategorias') }}">
                 @if (session('locale') === 'es')
-                    Catálogo
+                    Productos
                 @else
-                    Catalog
+                    Products
                 @endif
             </a>
             <a class="nav-item nav-link mx-1 {{ $active == 'page.carrito' ? 'activeheader' : '' }} newnav-link"
@@ -838,12 +838,20 @@
                     My profile
                 @endif
             </a>
-            <a class="nav-item nav-link mx-1 {{ $active == 'page.listaPrecios' ? 'activeheader' : '' }} newnav-link"
+            <a class="nav-item nav-link mx-1 {{ $active == 'page.listadeprecios' ? 'activeheader' : '' }} newnav-link"
                 href="{{ route('page.listadeprecios') }}">
                 @if (session('locale') === 'es')
                     Lista de precios
                 @else
                     Price list
+                @endif
+            </a>
+            <a class="nav-item nav-link mx-1 {{ $active == 'page.catalogos' ? 'activeheader' : '' }} newnav-link"
+                href="{{ route('page.catalogos') }}">
+                @if (session('locale') === 'es')
+                    Catálogos
+                @else
+                    Catalogs
                 @endif
             </a>
         @endif
@@ -987,9 +995,9 @@
                 <a class="nav-item nav-link {{ $active == 'page.productosCategorias' ? 'activeheader' : '' }}"
                     href="{{ route('page.productosCategorias') }}">
                     @if (session('locale') === 'es')
-                        Catálogo
+                        Productos
                     @else
-                        Catalog
+                        Products
                     @endif
                 </a>
                 <a class="nav-item nav-link {{ $active == 'page.carrito' ? 'activeheader' : '' }}"
@@ -1015,6 +1023,22 @@
                         Mi perfil
                     @else
                         My profile
+                    @endif
+                </a>
+                <a class="nav-item nav-link {{ $active == 'page.listadeprecios' ? 'activeheader' : '' }}"
+                    href="{{ route('page.listadeprecios') }}">
+                    @if (session('locale') === 'es')
+                        Lista de precios
+                    @else
+                        Price list
+                    @endif
+                </a>
+                <a class="nav-item nav-link {{ $active == 'page.catalogos' ? 'activeheader' : '' }}"
+                    href="{{ route('page.catalogos') }}">
+                    @if (session('locale') === 'es')
+                        Catálogos
+                    @else
+                        Catalogs
                     @endif
                 </a>
             @endif
