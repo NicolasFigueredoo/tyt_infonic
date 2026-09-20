@@ -120,6 +120,11 @@ const $globalState = inject("$globalState");
                         <span>Lista de precios</span>
                     </RouterLink>
 
+                    <RouterLink class="side-bar__item" to="/adm/catalogos">
+                        <i class="fa-solid fa-book"></i>
+                        <span>Catálogos</span>
+                    </RouterLink>
+
                     <RouterLink class="side-bar__item" to="/adm/pedidos">
                         <i class="fas fa-boxes"></i>
                         <span>Pedidos</span>

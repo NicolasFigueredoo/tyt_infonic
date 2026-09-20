@@ -60,6 +60,7 @@ use App\Http\Controllers\Admin\VendedoresController;
 use App\Http\Controllers\Admin\ComoComprarController;
 
 use App\Http\Controllers\Admin\DescargaController;
+use App\Http\Controllers\Admin\CatalogoController;
 
 use App\Http\Controllers\Admin\FamiliaController;
 
@@ -384,6 +385,24 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/store/{id?}',  [DescargaController::class, 'store']);
 
         Route::get('/delete/{id}',  [DescargaController::class, 'delete']);
+    });
+
+
+    Route::group([
+
+        'prefix' => 'catalogos',
+
+        'as'     => 'catalogos.',
+
+    ], function () {
+
+        Route::post('/',             [CatalogoController::class, 'all']);
+
+        Route::get('/{id}',         [CatalogoController::class, 'find']);
+
+        Route::post('/store/{id?}',  [CatalogoController::class, 'store']);
+
+        Route::get('/delete/{id}',  [CatalogoController::class, 'delete']);
     });
 
 

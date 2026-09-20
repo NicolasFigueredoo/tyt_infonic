@@ -53,6 +53,8 @@ import { routes as SubCategoriaRoutes } from '../sub-categoria/config'
 
 import { routes as ListaPreciosRoutes } from '../listaPrecios/config'
 
+import { routes as CatalogosRoutes } from '../catalogos/config'
+
 import { routes as ClientesPotenciales } from '../clientesPotenciales/config'
 
 import { routes as FormClientesRoutes } from '../formularioClientes/config'
@@ -141,6 +143,8 @@ export const routes = {
         SliderRoutes,
 
         ListaPreciosRoutes,
+
+        CatalogosRoutes,
 
         ClientesPotenciales,
 

@@ -105,8 +105,7 @@ class ZonaPrivadaController extends Controller
         $active = 'page.listadeprecios';
         $inicio = Inicio::first();
         // Solo listas de precios: los catálogos van en su propia sección (catalogos()).
-        $descargas = Descarga::orderBy('orden', 'ASC')->get()
-            ->reject(fn ($descarga) => $descarga->esCatalogo());
+        $descargas = Descarga::tipo('lista')->orderBy('orden', 'ASC')->get();
         return view('ZonaPrivada.listaPrecios', compact('active', 'descargas', 'inicio'));
     }
 
@@ -115,8 +114,7 @@ class ZonaPrivadaController extends Controller
         $active = 'page.catalogos';
         $inicio = Inicio::first();
         // Reutiliza la misma vista que lista de precios, mostrando solo los catálogos.
-        $descargas = Descarga::orderBy('orden', 'ASC')->get()
-            ->filter(fn ($descarga) => $descarga->esCatalogo());
+        $descargas = Descarga::tipo('catalogo')->orderBy('orden', 'ASC')->get();
         return view('ZonaPrivada.listaPrecios', compact('active', 'descargas', 'inicio'));
     }
 

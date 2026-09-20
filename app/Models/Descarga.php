@@ -24,12 +24,11 @@ class Descarga extends Model {
         });
     }    
 
-    // Una descarga se considera "catálogo" si su título (ES o EN) contiene la palabra catálogo/catalog.
-    // Se compara sin acentos ni mayúsculas para no depender de cómo se cargó en el admin.
-    public function esCatalogo(): bool
+    // Secciones: 'lista' se muestra en Lista de precios, 'catalogo' en Catálogos.
+    // El tipo lo define la sección del admin donde se carga el registro.
+    public function scopeTipo($query, $tipo)
     {
-        $texto = Str::lower(Str::ascii($this->titulo . ' ' . $this->tituloEnglish));
-        return Str::contains($texto, 'catalog');
+        return $query->where('tipo', $tipo);
     }
 
     public function getPathAttribute()
